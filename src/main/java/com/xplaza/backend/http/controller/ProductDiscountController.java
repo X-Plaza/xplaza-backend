@@ -24,6 +24,7 @@ import com.xplaza.backend.service.ProductDiscountService;
 import com.xplaza.backend.service.RoleService;
 import com.xplaza.backend.service.entity.ProductDiscount;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/product-discounts")
 public class ProductDiscountController extends BaseController {

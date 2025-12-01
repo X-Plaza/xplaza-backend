@@ -18,6 +18,7 @@ import com.xplaza.backend.http.dto.response.PlatformInfoResponse;
 import com.xplaza.backend.service.PlatformInfoService;
 import com.xplaza.backend.service.entity.PlatformInfo;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/platform-infos")
 public class PlatformInfoController extends BaseController {

@@ -22,6 +22,7 @@ import com.xplaza.backend.mapper.CouponMapper;
 import com.xplaza.backend.service.CouponService;
 import com.xplaza.backend.service.entity.Coupon;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/coupons")
 public class CouponController extends BaseController {

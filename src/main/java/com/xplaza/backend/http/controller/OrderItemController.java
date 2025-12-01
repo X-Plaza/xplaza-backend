@@ -22,6 +22,7 @@ import com.xplaza.backend.mapper.OrderItemMapper;
 import com.xplaza.backend.service.OrderItemService;
 import com.xplaza.backend.service.entity.OrderItem;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/order-items")
 public class OrderItemController extends BaseController {

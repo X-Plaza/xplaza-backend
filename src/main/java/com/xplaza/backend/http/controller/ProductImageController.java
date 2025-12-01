@@ -15,6 +15,7 @@ import com.xplaza.backend.mapper.ProductImageMapper;
 import com.xplaza.backend.service.ProductImageService;
 import com.xplaza.backend.service.entity.ProductImage;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/product-images")
 public class ProductImageController extends BaseController {

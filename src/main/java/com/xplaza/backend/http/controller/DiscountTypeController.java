@@ -25,6 +25,7 @@ import com.xplaza.backend.mapper.DiscountTypeMapper;
 import com.xplaza.backend.service.DiscountTypeService;
 import com.xplaza.backend.service.entity.DiscountType;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/discount-types")
 public class DiscountTypeController {

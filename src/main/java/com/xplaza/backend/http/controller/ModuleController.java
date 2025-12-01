@@ -22,6 +22,7 @@ import com.xplaza.backend.mapper.ModuleMapper;
 import com.xplaza.backend.service.ModuleService;
 import com.xplaza.backend.service.entity.Module;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/modules")
 public class ModuleController extends BaseController {

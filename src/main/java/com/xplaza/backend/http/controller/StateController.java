@@ -21,6 +21,7 @@ import com.xplaza.backend.mapper.StateMapper;
 import com.xplaza.backend.service.StateService;
 import com.xplaza.backend.service.entity.State;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/states")
 public class StateController extends BaseController {

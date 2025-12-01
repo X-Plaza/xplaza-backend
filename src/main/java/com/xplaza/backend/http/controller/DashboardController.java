@@ -17,6 +17,7 @@ import com.xplaza.backend.common.util.ApiResponse;
 import com.xplaza.backend.jpa.dao.RevenueDao;
 import com.xplaza.backend.service.DashboardService;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/dashboard")
 public class DashboardController extends BaseController {

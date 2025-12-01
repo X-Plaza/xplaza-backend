@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.xplaza.backend.common.util.ApiResponse;
 import com.xplaza.backend.service.ConfirmationTokenService;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/confirmation-tokens")
 public class ConfirmationTokenController {

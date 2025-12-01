@@ -22,6 +22,7 @@ import com.xplaza.backend.mapper.RoleMapper;
 import com.xplaza.backend.service.RoleService;
 import com.xplaza.backend.service.entity.Role;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/roles")
 public class RoleController extends BaseController {

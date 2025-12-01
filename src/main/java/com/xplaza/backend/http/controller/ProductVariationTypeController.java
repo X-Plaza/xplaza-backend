@@ -19,6 +19,7 @@ import com.xplaza.backend.mapper.ProductVariationTypeMapper;
 import com.xplaza.backend.service.ProductVariationTypeService;
 import com.xplaza.backend.service.entity.ProductVariationType;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/product-variation-types")
 public class ProductVariationTypeController extends BaseController {

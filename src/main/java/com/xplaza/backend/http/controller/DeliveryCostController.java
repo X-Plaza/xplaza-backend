@@ -20,6 +20,7 @@ import com.xplaza.backend.mapper.DeliveryCostMapper;
 import com.xplaza.backend.service.DeliveryCostService;
 import com.xplaza.backend.service.entity.DeliveryCost;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/delivery-costs")
 public class DeliveryCostController extends BaseController {

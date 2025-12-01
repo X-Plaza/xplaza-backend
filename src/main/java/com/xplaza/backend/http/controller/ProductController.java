@@ -25,6 +25,7 @@ import com.xplaza.backend.service.ProductService;
 import com.xplaza.backend.service.RoleService;
 import com.xplaza.backend.service.entity.Product;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/products")
 public class ProductController extends BaseController {

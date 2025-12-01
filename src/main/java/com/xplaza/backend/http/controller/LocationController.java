@@ -21,6 +21,7 @@ import com.xplaza.backend.mapper.LocationMapper;
 import com.xplaza.backend.service.LocationService;
 import com.xplaza.backend.service.entity.Location;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/locations")
 public class LocationController extends BaseController {

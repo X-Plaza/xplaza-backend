@@ -36,9 +36,10 @@ import com.xplaza.backend.service.RoleService;
 import com.xplaza.backend.service.SecurityService;
 import com.xplaza.backend.service.entity.AdminUser;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/admin-users")
-@Tag(name = "Admin User Management", description = "APIs for managing admin users")
+@Tag(name = "Admin User Management [DEPRECATED]", description = "APIs for managing admin users. Use V2 API instead.")
 public class AdminUserController extends BaseController {
   private static final Logger logger = LoggerFactory.getLogger(AdminUserController.class);
   private final AdminUserService adminUserService;

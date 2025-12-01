@@ -26,6 +26,7 @@ import com.xplaza.backend.service.PlatformInfoService;
 import com.xplaza.backend.service.RoleService;
 import com.xplaza.backend.service.entity.Order;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/orders")
 public class OrderController extends BaseController {

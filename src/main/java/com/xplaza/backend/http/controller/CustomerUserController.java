@@ -26,6 +26,7 @@ import com.xplaza.backend.service.CustomerUserService;
 import com.xplaza.backend.service.SecurityService;
 import com.xplaza.backend.service.entity.Customer;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/customers")
 public class CustomerUserController extends BaseController {

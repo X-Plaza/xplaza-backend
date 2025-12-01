@@ -19,6 +19,7 @@ import com.xplaza.backend.mapper.DayMapper;
 import com.xplaza.backend.service.DayService;
 import com.xplaza.backend.service.entity.Day;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/day-names")
 public class DayController extends BaseController {

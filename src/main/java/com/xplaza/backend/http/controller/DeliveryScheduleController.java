@@ -22,6 +22,7 @@ import com.xplaza.backend.mapper.DeliveryScheduleMapper;
 import com.xplaza.backend.service.DeliveryScheduleService;
 import com.xplaza.backend.service.entity.DeliverySchedule;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/delivery-schedules")
 public class DeliveryScheduleController extends BaseController {

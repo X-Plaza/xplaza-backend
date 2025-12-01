@@ -24,11 +24,12 @@ import com.xplaza.backend.http.dto.response.AuthenticationResponse;
 import com.xplaza.backend.service.AdminUserLoginService;
 import com.xplaza.backend.service.AuthUserDetailsService;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/authenticate")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Authentication", description = "APIs for user authentication and authorization")
+@Tag(name = "Authentication [DEPRECATED]", description = "APIs for user authentication and authorization. Use V2 API instead.")
 public class AuthController extends BaseController {
 
   private final JwtUtil jwtTokenUtil;

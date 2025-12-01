@@ -29,11 +29,12 @@ import com.xplaza.backend.mapper.BrandMapper;
 import com.xplaza.backend.service.BrandService;
 import com.xplaza.backend.service.entity.Brand;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/brands")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Brand Management", description = "APIs for managing product brands")
+@Tag(name = "Brand Management [DEPRECATED]", description = "APIs for managing product brands. Use V2 API instead.")
 public class BrandController extends BaseController {
   private final BrandService brandService;
   private final BrandMapper brandMapper;

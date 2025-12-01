@@ -22,6 +22,7 @@ import com.xplaza.backend.mapper.CurrencyMapper;
 import com.xplaza.backend.service.CurrencyService;
 import com.xplaza.backend.service.entity.Currency;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/currencies")
 public class CurrencyController extends BaseController {

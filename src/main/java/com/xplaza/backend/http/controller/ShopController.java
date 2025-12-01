@@ -22,6 +22,7 @@ import com.xplaza.backend.service.RoleService;
 import com.xplaza.backend.service.ShopService;
 import com.xplaza.backend.service.entity.Shop;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/shops")
 public class ShopController extends BaseController {
