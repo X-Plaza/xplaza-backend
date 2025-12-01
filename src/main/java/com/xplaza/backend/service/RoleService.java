@@ -7,25 +7,21 @@ package com.xplaza.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.Role;
 import com.xplaza.backend.jpa.dao.RoleDao;
 import com.xplaza.backend.jpa.repository.RoleRepository;
 import com.xplaza.backend.mapper.RoleMapper;
-import com.xplaza.backend.service.entity.Role;
 
 @Service
+@RequiredArgsConstructor
 public class RoleService {
   private final RoleRepository roleRepo;
   private final RoleMapper roleMapper;
-
-  @Autowired
-  public RoleService(RoleRepository roleRepo, RoleMapper roleMapper) {
-    this.roleRepo = roleRepo;
-    this.roleMapper = roleMapper;
-  }
 
   @Transactional
   public void addRole(Role entity) {

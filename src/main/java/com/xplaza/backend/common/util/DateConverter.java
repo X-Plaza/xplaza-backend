@@ -10,6 +10,9 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class DateConverter {
   public Date convertDateToStartOfTheDay(Date date) {
     Instant inst = date.toInstant();

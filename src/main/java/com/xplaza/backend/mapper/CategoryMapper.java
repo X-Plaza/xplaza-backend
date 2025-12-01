@@ -7,10 +7,10 @@ package com.xplaza.backend.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.xplaza.backend.domain.Category;
 import com.xplaza.backend.http.dto.request.CategoryRequest;
 import com.xplaza.backend.http.dto.response.CategoryResponse;
 import com.xplaza.backend.jpa.dao.CategoryDao;
-import com.xplaza.backend.service.entity.Category;
 
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {

@@ -6,8 +6,8 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 
+import com.xplaza.backend.domain.ConfirmationToken;
 import com.xplaza.backend.jpa.dao.ConfirmationTokenDao;
-import com.xplaza.backend.service.entity.ConfirmationToken;
 
 @Mapper(componentModel = "spring")
 public interface ConfirmationTokenMapper {

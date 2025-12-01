@@ -6,28 +6,23 @@ package com.xplaza.backend.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.ProductVariationType;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.ProductVariationTypeDao;
 import com.xplaza.backend.jpa.repository.ProductVariationTypeRepository;
 import com.xplaza.backend.mapper.ProductVariationTypeMapper;
-import com.xplaza.backend.service.entity.ProductVariationType;
 
 @Service
+@RequiredArgsConstructor
 public class ProductVariationTypeService {
 
   private final ProductVariationTypeRepository productVariationTypeRepository;
   private final ProductVariationTypeMapper productVariationTypeMapper;
-
-  @Autowired
-  public ProductVariationTypeService(ProductVariationTypeRepository productVariationTypeRepository,
-      ProductVariationTypeMapper productVariationTypeMapper) {
-    this.productVariationTypeRepository = productVariationTypeRepository;
-    this.productVariationTypeMapper = productVariationTypeMapper;
-  }
 
   @Transactional
   public ProductVariationType addProductVariationType(ProductVariationType productVariationType) {

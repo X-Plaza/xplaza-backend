@@ -21,11 +21,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.xplaza.backend.domain.Brand;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.BrandDao;
 import com.xplaza.backend.jpa.repository.BrandRepository;
 import com.xplaza.backend.mapper.BrandMapper;
-import com.xplaza.backend.service.entity.Brand;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("BrandService Unit Tests")

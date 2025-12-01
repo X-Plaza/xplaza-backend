@@ -7,19 +7,21 @@ package com.xplaza.backend.service;
 import java.util.List;
 import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.xplaza.backend.common.util.ValidationUtil;
+import com.xplaza.backend.domain.OrderItem;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.exception.ValidationException;
 import com.xplaza.backend.jpa.dao.*;
 import com.xplaza.backend.jpa.repository.*;
 import com.xplaza.backend.mapper.OrderItemMapper;
-import com.xplaza.backend.service.entity.OrderItem;
 
 @Service
+@RequiredArgsConstructor
 public class OrderItemService {
   private final OrderItemRepository orderItemRepo;
   private final OrderRepository orderRepo;
@@ -28,19 +30,6 @@ public class OrderItemService {
   private final ProductDiscountRepository productDiscountRepo;
   private final OrderItemMapper orderItemMapper;
   private final CouponRepository couponRepo;
-
-  @Autowired
-  public OrderItemService(OrderItemRepository orderItemRepo, OrderRepository orderRepo, ProductRepository productRepo,
-      DeliveryCostRepository deliveryCostRepo, ProductDiscountRepository productDiscountRepo,
-      OrderItemMapper orderItemMapper, CouponRepository couponRepo) {
-    this.orderItemRepo = orderItemRepo;
-    this.orderRepo = orderRepo;
-    this.productRepo = productRepo;
-    this.deliveryCostRepo = deliveryCostRepo;
-    this.productDiscountRepo = productDiscountRepo;
-    this.orderItemMapper = orderItemMapper;
-    this.couponRepo = couponRepo;
-  }
 
   @Transactional
   public OrderItem addOrderItem(OrderItem orderItem) {

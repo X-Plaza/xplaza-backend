@@ -39,6 +39,31 @@ public interface ProductRepository extends JpaRepository<ProductDao, Long> {
   @Query("UPDATE ProductDao p SET p.quantity = :quantity WHERE p.productId = :id")
   void updateInventory(@Param("id") Long id, @Param("quantity") int quantity);
 
+  /**
+   * Atomically decrement inventory. Returns the number of rows affected. If 0
+   * rows affected, it means insufficient stock. This prevents race conditions
+   * during concurrent order placement.
+   */
+  @Modifying
+  @Transactional
+  @Query("UPDATE ProductDao p SET p.quantity = p.quantity - :decrement WHERE p.productId = :id AND p.quantity >= :decrement")
+  int decrementInventory(@Param("id") Long id, @Param("decrement") Long decrement);
+
+  /**
+   * Atomically increment inventory (for order cancellations, returns,
+   * restocking).
+   */
+  @Modifying
+  @Transactional
+  @Query("UPDATE ProductDao p SET p.quantity = p.quantity + :increment WHERE p.productId = :id")
+  int incrementInventory(@Param("id") Long id, @Param("increment") Long increment);
+
+  /**
+   * Find the shop ID for a product. Used for authorization checks.
+   */
+  @Query("SELECT p.shop.shopId FROM ProductDao p WHERE p.productId = :productId")
+  Long findShopIdByProductId(@Param("productId") Long productId);
+
   // Pagination support - using native query because of link table
   @Query(value = "SELECT p.* FROM products p " +
       "JOIN shops s ON p.shop_id = s.shop_id " +

@@ -6,10 +6,10 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 
+import com.xplaza.backend.domain.Shop;
 import com.xplaza.backend.http.dto.request.ShopRequest;
 import com.xplaza.backend.http.dto.response.ShopResponse;
 import com.xplaza.backend.jpa.dao.ShopDao;
-import com.xplaza.backend.service.entity.Shop;
 
 @Mapper(componentModel = "spring")
 public interface ShopMapper {

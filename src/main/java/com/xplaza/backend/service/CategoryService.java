@@ -7,28 +7,24 @@ package com.xplaza.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.Category;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.CategoryDao;
 import com.xplaza.backend.jpa.repository.CategoryRepository;
 import com.xplaza.backend.mapper.CategoryMapper;
-import com.xplaza.backend.service.entity.Category;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
   private final CategoryRepository categoryRepo;
   private final CategoryMapper categoryMapper;
-
-  @Autowired
-  public CategoryService(CategoryRepository categoryRepo, CategoryMapper categoryMapper) {
-    this.categoryRepo = categoryRepo;
-    this.categoryMapper = categoryMapper;
-  }
 
   @Transactional
   public Category addCategory(Category category) {
@@ -74,7 +70,7 @@ public class CategoryService {
     return categoryRepo.getName(id);
   }
 
-  // ===== V2 Paginated Methods =====
+  // ===== Paginated Methods =====
 
   public Page<Category> listCategoriesPaginated(Pageable pageable) {
     return categoryRepo.findAll(pageable)

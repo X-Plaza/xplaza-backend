@@ -7,10 +7,10 @@ package com.xplaza.backend.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.xplaza.backend.domain.Product;
 import com.xplaza.backend.http.dto.request.ProductRequest;
 import com.xplaza.backend.http.dto.response.ProductResponse;
 import com.xplaza.backend.jpa.dao.ProductDao;
-import com.xplaza.backend.service.entity.Product;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {

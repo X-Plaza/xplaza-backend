@@ -7,8 +7,8 @@ package com.xplaza.backend.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.xplaza.backend.domain.ProductToStock;
 import com.xplaza.backend.jpa.dao.ProductToStockDao;
-import com.xplaza.backend.service.entity.ProductToStock;
 
 @Mapper(componentModel = "spring")
 public interface ProductToStockMapper {

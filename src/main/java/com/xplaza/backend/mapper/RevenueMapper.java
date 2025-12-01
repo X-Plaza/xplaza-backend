@@ -7,8 +7,8 @@ package com.xplaza.backend.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.xplaza.backend.domain.Revenue;
 import com.xplaza.backend.jpa.dao.RevenueDao;
-import com.xplaza.backend.service.entity.Revenue;
 
 @Mapper(componentModel = "spring")
 public interface RevenueMapper {

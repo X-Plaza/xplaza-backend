@@ -7,23 +7,22 @@ package com.xplaza.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.State;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.StateDao;
 import com.xplaza.backend.jpa.repository.StateRepository;
 import com.xplaza.backend.mapper.StateMapper;
-import com.xplaza.backend.service.entity.State;
 
 @Service
+@RequiredArgsConstructor
 public class StateService {
-  @Autowired
-  private StateRepository stateRepo;
-
-  @Autowired
-  private StateMapper stateMapper;
+  private final StateRepository stateRepo;
+  private final StateMapper stateMapper;
 
   @Transactional
   public State addState(State state) {

@@ -30,9 +30,9 @@ public interface CategoryRepository extends JpaRepository<CategoryDao, Long> {
   @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM CategoryDao c WHERE c.parentCategory.categoryId = :id")
   boolean hasChildCategory(@Param("id") Long id);
 
-  // V2: Search by name (case-insensitive)
+  // Search by name (case-insensitive)
   Page<CategoryDao> findByCategoryNameContainingIgnoreCase(String categoryName, Pageable pageable);
 
-  // V2: Find by parent category
+  // Find by parent category
   Page<CategoryDao> findByParentCategoryCategoryId(Long parentId, Pageable pageable);
 }

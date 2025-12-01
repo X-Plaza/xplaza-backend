@@ -7,10 +7,10 @@ package com.xplaza.backend.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.xplaza.backend.domain.ProductDiscount;
 import com.xplaza.backend.http.dto.request.ProductDiscountRequest;
 import com.xplaza.backend.http.dto.response.ProductDiscountResponse;
 import com.xplaza.backend.jpa.dao.ProductDiscountDao;
-import com.xplaza.backend.service.entity.ProductDiscount;
 
 @Mapper(componentModel = "spring", uses = { ProductMapper.class, DiscountTypeMapper.class, CurrencyMapper.class })
 public interface ProductDiscountMapper {

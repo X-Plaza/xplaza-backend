@@ -6,27 +6,23 @@ package com.xplaza.backend.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.ProductImage;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.ProductImageDao;
 import com.xplaza.backend.jpa.repository.ProductImageRepository;
 import com.xplaza.backend.mapper.ProductImageMapper;
-import com.xplaza.backend.service.entity.ProductImage;
 
 @Service
+@RequiredArgsConstructor
 public class ProductImageService {
 
   private final ProductImageRepository productImageRepo;
   private final ProductImageMapper productImageMapper;
-
-  @Autowired
-  public ProductImageService(ProductImageRepository productImageRepo, ProductImageMapper productImageMapper) {
-    this.productImageRepo = productImageRepo;
-    this.productImageMapper = productImageMapper;
-  }
 
   @Transactional
   public ProductImage addProductImage(ProductImage productImage) {

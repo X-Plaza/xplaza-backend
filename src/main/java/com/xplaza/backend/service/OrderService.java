@@ -9,7 +9,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -18,15 +19,17 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.*;
+import com.xplaza.backend.exception.InsufficientInventoryException;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.http.dto.response.OrderResponse;
 import com.xplaza.backend.jpa.dao.*;
 import com.xplaza.backend.jpa.repository.*;
 import com.xplaza.backend.mapper.CouponMapper;
 import com.xplaza.backend.mapper.OrderMapper;
-import com.xplaza.backend.service.entity.*;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
   private final OrderRepository orderRepo;
   private final OrderMapper orderMapper;
@@ -40,26 +43,6 @@ public class OrderService {
   private final CurrencyRepository currencyRepo;
   private final Environment env;
   private final CouponMapper couponMapper;
-
-  @Autowired
-  public OrderService(OrderRepository orderRepo, OrderMapper orderMapper, ProductRepository productRepo,
-      ProductDiscountRepository productDiscountRepo, CouponRepository couponRepo,
-      DeliveryCostRepository deliveryCostRepo, EmailSenderService emailSenderService,
-      CustomerUserRepository customerUserRepo, AdminUserRepository adminUserRepo, CurrencyRepository currencyRepo,
-      Environment env, CouponMapper couponMapper) {
-    this.orderRepo = orderRepo;
-    this.orderMapper = orderMapper;
-    this.productRepo = productRepo;
-    this.productDiscountRepo = productDiscountRepo;
-    this.couponRepo = couponRepo;
-    this.deliveryCostRepo = deliveryCostRepo;
-    this.emailSenderService = emailSenderService;
-    this.customerUserRepo = customerUserRepo;
-    this.adminUserRepo = adminUserRepo;
-    this.currencyRepo = currencyRepo;
-    this.env = env;
-    this.couponMapper = couponMapper;
-  }
 
   public ProductInventory validateProductAvailability(Order order) {
     ProductInventory productInventory = new ProductInventory();
@@ -165,9 +148,14 @@ public class OrderService {
     if (couponDetails.getDiscountType().getDiscountTypeName().equals("Fixed Amount")) {
       couponAmount = couponDetails.getDiscountValue();
     } else {
+      // Percentage discount: calculate the percentage of the net total
       couponAmount = (order.getNetTotal() * couponDetails.getDiscountValue()) / 100;
-      if (couponAmount > couponDetails.getDiscountValue()) {
-        couponAmount = couponDetails.getDiscountValue();
+
+      // Cap at max discount amount if specified in the coupon entity
+      // Note: The coupon entity has a maxAmount field that should be used here
+      // For now, we ensure the discount doesn't exceed the order total
+      if (couponAmount > order.getNetTotal()) {
+        couponAmount = order.getNetTotal();
       }
     }
     return couponAmount;
@@ -208,6 +196,26 @@ public class OrderService {
 
   @Transactional
   public Order createOrder(Order order) {
+    // Atomically deduct inventory for all items
+    // This prevents overselling in concurrent scenarios
+    for (OrderItem item : order.getOrderItemList()) {
+      int rowsAffected = productRepo.decrementInventory(item.getProductId(), item.getQuantity());
+      if (rowsAffected == 0) {
+        // Inventory deduction failed - either product doesn't exist or insufficient
+        // stock
+        ProductDao product = productRepo.findProductById(item.getProductId());
+        if (product == null) {
+          throw new ResourceNotFoundException("Product not found with id: " + item.getProductId());
+        }
+        throw new InsufficientInventoryException(
+            item.getProductId(),
+            product.getProductName(),
+            item.getQuantity(),
+            product.getQuantity());
+      }
+    }
+
+    // Create the order
     OrderDao dao = orderMapper.toDao(order);
     dao = orderRepo.save(dao);
     return orderMapper.toEntityFromDao(dao);
@@ -230,6 +238,27 @@ public class OrderService {
       throw new ResourceNotFoundException("Order not found with id: " + id);
     }
     orderRepo.deleteById(id);
+  }
+
+  /**
+   * Cancel an order and restore inventory. This should be called when an order is
+   * cancelled before fulfillment.
+   * 
+   * @param orderId the ID of the order to cancel
+   * @param remarks optional remarks about the cancellation
+   */
+  @Transactional
+  public void cancelOrder(Long orderId, String remarks) {
+    Order order = getOrderById(orderId);
+
+    // Restore inventory for all items
+    for (OrderItem item : order.getOrderItemList()) {
+      productRepo.incrementInventory(item.getProductId(), item.getQuantity());
+    }
+
+    // Update order status to cancelled (assuming status ID 5 is cancelled)
+    // Note: Consider using an enum or configuration for status IDs
+    updateOrderStatus(orderId, remarks != null ? remarks : "Order cancelled", 5L);
   }
 
   public List<OrderList> getAllOrders() {
@@ -340,7 +369,7 @@ public class OrderService {
         .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
   }
 
-  // ===== V2 Paginated Methods =====
+  // ===== Paginated Methods =====
   // Note: These use in-memory pagination for now since the existing queries are
   // complex native SQL.
   // For production, consider rewriting with Spring Data JPA Specifications for

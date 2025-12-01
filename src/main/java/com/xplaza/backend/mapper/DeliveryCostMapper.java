@@ -6,10 +6,10 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 
+import com.xplaza.backend.domain.DeliveryCost;
 import com.xplaza.backend.http.dto.request.DeliveryCostRequest;
 import com.xplaza.backend.http.dto.response.DeliveryCostResponse;
 import com.xplaza.backend.jpa.dao.DeliveryCostDao;
-import com.xplaza.backend.service.entity.DeliveryCost;
 
 @Mapper(componentModel = "spring")
 public interface DeliveryCostMapper {

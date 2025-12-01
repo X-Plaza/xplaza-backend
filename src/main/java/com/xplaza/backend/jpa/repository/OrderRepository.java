@@ -12,9 +12,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.OrderDetails;
+import com.xplaza.backend.domain.OrderList;
 import com.xplaza.backend.jpa.dao.OrderDao;
-import com.xplaza.backend.service.entity.OrderDetails;
-import com.xplaza.backend.service.entity.OrderList;
 
 public interface OrderRepository extends JpaRepository<OrderDao, Long> {
   @Modifying
@@ -24,6 +24,12 @@ public interface OrderRepository extends JpaRepository<OrderDao, Long> {
 
   @Query(value = "select o.* from orders o where o.order_id = ?1", nativeQuery = true)
   OrderDao findOrderById(Long order_id);
+
+  /**
+   * Find the shop ID for an order. Used for authorization checks.
+   */
+  @Query(value = "SELECT shop_id FROM orders WHERE order_id = ?1", nativeQuery = true)
+  Long findShopIdByOrderId(Long orderId);
 
   @Query(value = "select o.order_id, o.total_price, o.discount_amount, o.net_total, o.grand_total_price, " +
       "o.delivery_address, o.customer_id, null as invoice_number," +

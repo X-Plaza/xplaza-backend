@@ -7,62 +7,143 @@ package com.xplaza.backend.common.util;
 import java.time.Instant;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
- * Generic API response wrapper for consistent response structure.
+ * Clean API response wrapper following REST best practices. Minimal structure:
+ * success/error status, data, and optional message.
  *
  * @param <T> The type of data being returned
  */
 @Getter
-@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({ "success", "data", "error", "meta" })
 public class ApiResponse<T> {
-  private long responseTime;
-  private String responseType;
-  private int status;
-  private String response;
-  private String message;
-  private T data;
-  private String timestamp;
 
-  public ApiResponse(long responseTime, String responseType, int status, String response, String message, T data) {
-    this.responseTime = responseTime;
-    this.responseType = responseType;
-    this.status = status;
-    this.response = response;
-    this.message = message;
+  private final boolean success;
+  private final T data;
+  private final ErrorInfo error;
+  private final Meta meta;
+
+  private ApiResponse(boolean success, T data, ErrorInfo error, Meta meta) {
+    this.success = success;
     this.data = data;
-    this.timestamp = Instant.now().toString();
+    this.error = error;
+    this.meta = meta;
+  }
+
+  // ===== Success Responses =====
+
+  /**
+   * Success response with data only (for single resource)
+   */
+  public static <T> ApiResponse<T> ok(T data) {
+    return new ApiResponse<>(true, data, null, null);
   }
 
   /**
-   * Factory method for success responses with data
+   * Success response with data and pagination meta
    */
-  public static <T> ApiResponse<T> success(String responseType, T data, long responseTime) {
-    return new ApiResponse<>(responseTime, responseType, 200, "Success", "", data);
+  public static <T> ApiResponse<T> ok(T data, PageMeta pagination) {
+    return new ApiResponse<>(true, data, null, new Meta(pagination, null));
   }
 
   /**
-   * Factory method for success responses with message
+   * Success response for create operations (201)
    */
-  public static <T> ApiResponse<T> success(String responseType, String message, long responseTime) {
-    return new ApiResponse<>(responseTime, responseType, 200, "Success", message, null);
+  public static <T> ApiResponse<T> created(T data) {
+    return new ApiResponse<>(true, data, null, null);
   }
 
   /**
-   * Factory method for created responses
+   * Success response for delete/update with message
    */
-  public static <T> ApiResponse<T> created(String responseType, String message, long responseTime) {
-    return new ApiResponse<>(responseTime, responseType, 201, "Success", message, null);
+  public static ApiResponse<Void> ok(String message) {
+    return new ApiResponse<>(true, null, null, new Meta(null, message));
   }
 
   /**
-   * Factory method for error responses
+   * Empty success response (for 204 No Content scenarios)
    */
-  public static <T> ApiResponse<T> error(String responseType, int status, String message, long responseTime) {
-    return new ApiResponse<>(responseTime, responseType, status, "Error", message, null);
+  public static ApiResponse<Void> noContent() {
+    return new ApiResponse<>(true, null, null, null);
+  }
+
+  // ===== Error Responses =====
+
+  /**
+   * Error response with code, message, and optional details
+   */
+  public static <T> ApiResponse<T> error(String code, String message) {
+    return new ApiResponse<>(false, null, new ErrorInfo(code, message, null), null);
+  }
+
+  /**
+   * Error response with validation details
+   */
+  public static <T> ApiResponse<T> error(String code, String message, Object details) {
+    return new ApiResponse<>(false, null, new ErrorInfo(code, message, details), null);
+  }
+
+  // ===== Nested Classes =====
+
+  @Getter
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  public static class ErrorInfo {
+    private final String code;
+    private final String message;
+    private final Object details;
+    private final String timestamp;
+
+    public ErrorInfo(String code, String message, Object details) {
+      this.code = code;
+      this.message = message;
+      this.details = details;
+      this.timestamp = Instant.now().toString();
+    }
+  }
+
+  @Getter
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  public static class Meta {
+    private final PageMeta pagination;
+    private final String message;
+
+    public Meta(PageMeta pagination, String message) {
+      this.pagination = pagination;
+      this.message = message;
+    }
+  }
+
+  @Getter
+  public static class PageMeta {
+    private final int page;
+    private final int size;
+    private final long totalElements;
+    private final int totalPages;
+    private final boolean hasNext;
+    private final boolean hasPrevious;
+
+    public PageMeta(int page, int size, long totalElements, int totalPages) {
+      this.page = page;
+      this.size = size;
+      this.totalElements = totalElements;
+      this.totalPages = totalPages;
+      this.hasNext = page < totalPages - 1;
+      this.hasPrevious = page > 0;
+    }
+
+    /**
+     * Create from Spring Data Page
+     */
+    public static PageMeta from(org.springframework.data.domain.Page<?> page) {
+      return new PageMeta(
+          page.getNumber(),
+          page.getSize(),
+          page.getTotalElements(),
+          page.getTotalPages());
+    }
   }
 }

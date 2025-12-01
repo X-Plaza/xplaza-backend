@@ -6,10 +6,10 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 
+import com.xplaza.backend.domain.Location;
 import com.xplaza.backend.http.dto.request.LocationRequest;
 import com.xplaza.backend.http.dto.response.LocationResponse;
 import com.xplaza.backend.jpa.dao.LocationDao;
-import com.xplaza.backend.service.entity.Location;
 
 @Mapper(componentModel = "spring")
 public interface LocationMapper {

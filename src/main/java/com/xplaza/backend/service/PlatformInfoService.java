@@ -6,24 +6,20 @@ package com.xplaza.backend.service;
 
 import jakarta.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.PlatformInfo;
 import com.xplaza.backend.jpa.repository.PlatformInfoRepository;
 import com.xplaza.backend.mapper.PlatformInfoMapper;
-import com.xplaza.backend.service.entity.PlatformInfo;
 
 @Service
+@RequiredArgsConstructor
 public class PlatformInfoService {
   private final PlatformInfoRepository platformInfoRepo;
-  @Autowired
-  private PlatformInfoMapper platformInfoMapper;
-
-  @Autowired
-  public PlatformInfoService(PlatformInfoRepository platformInfoRepo) {
-    this.platformInfoRepo = platformInfoRepo;
-  }
+  private final PlatformInfoMapper platformInfoMapper;
 
   public PlatformInfo listPlatform() {
     return platformInfoMapper.toEntityFromDao(platformInfoRepo.findAll().getFirst());

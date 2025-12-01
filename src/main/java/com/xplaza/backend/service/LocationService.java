@@ -7,26 +7,22 @@ package com.xplaza.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.Location;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.LocationDao;
 import com.xplaza.backend.jpa.repository.LocationRepository;
 import com.xplaza.backend.mapper.LocationMapper;
-import com.xplaza.backend.service.entity.Location;
 
 @Service
+@RequiredArgsConstructor
 public class LocationService {
   private final LocationRepository locationRepo;
   private final LocationMapper locationMapper;
-
-  @Autowired
-  public LocationService(LocationRepository locationRepo, LocationMapper locationMapper) {
-    this.locationRepo = locationRepo;
-    this.locationMapper = locationMapper;
-  }
 
   @Transactional
   public Location addLocation(Location location) {
