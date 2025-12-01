@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.CityDao;
 import com.xplaza.backend.jpa.repository.CityRepository;
 import com.xplaza.backend.mapper.CityMapper;
@@ -40,7 +41,7 @@ public class CityService {
   @Transactional
   public City updateCity(City city) {
     CityDao existingCityDao = cityRepo.findById(city.getCityId())
-        .orElseThrow(() -> new RuntimeException("City not found with id: " + city.getCityId()));
+        .orElseThrow(() -> new ResourceNotFoundException("City not found with id: " + city.getCityId()));
     // Update the existing city with new values
     existingCityDao.setCityName(city.getCityName());
     existingCityDao.setLocations(city.getLocations().stream().map(locationMapper::toDao).toList());
@@ -62,7 +63,7 @@ public class CityService {
 
   public City listCity(Long id) {
     CityDao cityDao = cityRepo.findById(id)
-        .orElseThrow(() -> new RuntimeException("City not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("City not found with id: " + id));
     return cityMapper.toEntityFromDao(cityDao);
   }
 

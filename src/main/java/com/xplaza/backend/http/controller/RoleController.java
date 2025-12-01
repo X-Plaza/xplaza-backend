@@ -4,7 +4,6 @@
  */
 package com.xplaza.backend.http.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -23,6 +22,7 @@ import com.xplaza.backend.mapper.RoleMapper;
 import com.xplaza.backend.service.RoleService;
 import com.xplaza.backend.service.entity.Role;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/roles")
 public class RoleController extends BaseController {
@@ -35,17 +35,13 @@ public class RoleController extends BaseController {
     this.roleMapper = roleMapper;
   }
 
-  private Date start, end;
-  private Long responseTime;
-
   @GetMapping
   public ResponseEntity<ApiResponse> getRoles() throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     List<Role> roles = roleService.listRoles();
     roles.removeIf(r -> r.getRoleName().equals("Master Admin"));
     List<RoleResponse> dtos = roles.stream().map(roleMapper::toResponse).toList();
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dtos);
     ApiResponse response = new ApiResponse(responseTime, "Role List", HttpStatus.OK.value(), "Success", "", data);
     return ResponseEntity.ok(response);
@@ -53,11 +49,10 @@ public class RoleController extends BaseController {
 
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse> getRole(@PathVariable @Valid Long id) throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Role entity = roleService.listRole(id);
     RoleResponse dto = roleMapper.toResponse(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dto);
     ApiResponse response = new ApiResponse(responseTime, "Role by ID", HttpStatus.OK.value(), "Success", "", data);
     return ResponseEntity.ok(response);
@@ -65,22 +60,20 @@ public class RoleController extends BaseController {
 
   @PostMapping
   public ResponseEntity<ApiResponse> addRole(@RequestBody @Valid RoleRequest roleRequest) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Role entity = roleMapper.toEntity(roleRequest);
     roleService.addRole(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Add Role", HttpStatus.CREATED.value(),
         "Success", "Role has been created.", null), HttpStatus.CREATED);
   }
 
   @PutMapping
   public ResponseEntity<ApiResponse> updateRole(@RequestBody @Valid RoleRequest roleRequestDTO) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Role entity = roleMapper.toEntity(roleRequestDTO);
     roleService.updateRole(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Update Role", HttpStatus.OK.value(),
         "Success", "Role has been updated.", null), HttpStatus.OK);
   }
@@ -88,10 +81,9 @@ public class RoleController extends BaseController {
   @DeleteMapping("/{id}")
   public ResponseEntity<ApiResponse> deleteRole(@PathVariable @Valid Long id) {
     String role_name = roleService.getRoleNameByID(id);
-    start = new Date();
+    long start = System.currentTimeMillis();
     roleService.deleteRole(id);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Delete Role", HttpStatus.OK.value(),
         "Success", role_name + " has been deleted.", null), HttpStatus.OK);
   }

@@ -29,11 +29,12 @@ import com.xplaza.backend.mapper.CategoryMapper;
 import com.xplaza.backend.service.CategoryService;
 import com.xplaza.backend.service.entity.Category;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/categories")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Category Management", description = "APIs for managing product categories")
+@Tag(name = "Category Management [DEPRECATED]", description = "APIs for managing product categories. Use V2 API instead.")
 public class CategoryController extends BaseController {
   private final CategoryService categoryService;
   private final CategoryMapper categoryMapper;

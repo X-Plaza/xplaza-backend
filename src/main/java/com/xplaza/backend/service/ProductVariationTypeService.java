@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.ProductVariationTypeDao;
 import com.xplaza.backend.jpa.repository.ProductVariationTypeRepository;
 import com.xplaza.backend.mapper.ProductVariationTypeMapper;
@@ -39,7 +40,7 @@ public class ProductVariationTypeService {
   public ProductVariationType updateProductVariationType(ProductVariationType productVariationType) {
     ProductVariationTypeDao existingProductVariationTypeDao = productVariationTypeRepository
         .findById(productVariationType.getProductVarTypeId())
-        .orElseThrow(() -> new RuntimeException(
+        .orElseThrow(() -> new ResourceNotFoundException(
             "Product variation type not found with id: " + productVariationType.getProductVarTypeId()));
     ProductVariationTypeDao productVariationTypeDao = productVariationTypeMapper.toDao(productVariationType);
     productVariationTypeDao.setProductVarTypeId(existingProductVariationTypeDao.getProductVarTypeId());
@@ -62,7 +63,7 @@ public class ProductVariationTypeService {
 
   public ProductVariationType listProductVariationType(Long id) {
     ProductVariationTypeDao productVariationTypeDao = productVariationTypeRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Product variation type not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Product variation type not found with id: " + id));
     return productVariationTypeMapper.toEntityFromDao(productVariationTypeDao);
   }
 }

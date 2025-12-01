@@ -4,8 +4,6 @@
  */
 package com.xplaza.backend.http.controller;
 
-import java.util.Date;
-
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,7 @@ import com.xplaza.backend.common.util.ApiResponse;
 import com.xplaza.backend.jpa.dao.RevenueDao;
 import com.xplaza.backend.service.DashboardService;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/dashboard")
 public class DashboardController extends BaseController {
@@ -29,16 +28,12 @@ public class DashboardController extends BaseController {
     this.dashboardService = dashboardService;
   }
 
-  private Date start, end;
-  private Long responseTime;
-
   @PostMapping
   public ResponseEntity<ApiResponse> dashboardDetails(@RequestParam(value = "shop_id") @Valid Long shop_id)
       throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     RevenueDao dto = dashboardService.getDashboardDetails(shop_id);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dto);
     ApiResponse response = new ApiResponse(responseTime, "Dashboard Details", HttpStatus.OK.value(), "Success", "",
         data);
@@ -48,10 +43,9 @@ public class DashboardController extends BaseController {
   @PostMapping("/monthly-profits")
   public ResponseEntity<ApiResponse> getMonthlyProfit(@RequestParam(value = "shop_id") @Valid Long shop_id,
       @RequestParam(value = "month") @Valid int month) throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Double dto = dashboardService.getMonthlyProfit(shop_id, month);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dto);
     ApiResponse response = new ApiResponse(responseTime, "Monthly Profit", HttpStatus.OK.value(), "Success", "", data);
     return ResponseEntity.ok(response);
@@ -60,10 +54,9 @@ public class DashboardController extends BaseController {
   @PostMapping("/monthly-sales")
   public ResponseEntity<ApiResponse> getMonthlySales(@RequestParam(value = "shop_id") @Valid Long shop_id,
       @RequestParam(value = "month") @Valid int month) throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Double dto = dashboardService.getMonthlySales(shop_id, month);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dto);
     ApiResponse response = new ApiResponse(responseTime, "Monthly Sales", HttpStatus.OK.value(), "Success", "", data);
     return ResponseEntity.ok(response);

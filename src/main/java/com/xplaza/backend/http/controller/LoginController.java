@@ -25,6 +25,7 @@ import com.xplaza.backend.service.entity.AdminUser;
 import com.xplaza.backend.service.entity.ConfirmationToken;
 import com.xplaza.backend.service.entity.Login;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/login")
 public class LoginController extends BaseController {

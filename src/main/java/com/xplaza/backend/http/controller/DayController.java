@@ -4,8 +4,6 @@
  */
 package com.xplaza.backend.http.controller;
 
-import java.util.Date;
-
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +19,7 @@ import com.xplaza.backend.mapper.DayMapper;
 import com.xplaza.backend.service.DayService;
 import com.xplaza.backend.service.entity.Day;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/day-names")
 public class DayController extends BaseController {
@@ -33,16 +32,12 @@ public class DayController extends BaseController {
     this.dayMapper = dayMapper;
   }
 
-  private Date start, end;
-  private Long responseTime;
-
   @GetMapping
   public ResponseEntity<ApiResponse> getDays() throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     var entities = dayService.listDays();
     var dtos = entities.stream().map(dayMapper::toResponse).toList();
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dtos);
     ApiResponse response = new ApiResponse(responseTime, "DayName List", HttpStatus.OK.value(), "Success", "", data);
     return ResponseEntity.ok(response);
@@ -50,10 +45,9 @@ public class DayController extends BaseController {
 
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse> getDay(@PathVariable @Valid Long id) throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     String dayName = dayService.getDayNameByID(id);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dayName);
     ApiResponse response = new ApiResponse(responseTime, "DayName By ID", HttpStatus.OK.value(), "Success", "", data);
     return ResponseEntity.ok(response);
@@ -61,22 +55,20 @@ public class DayController extends BaseController {
 
   @PostMapping
   public ResponseEntity<ApiResponse> addDay(@RequestBody @Valid DayRequest dayRequest) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Day entity = dayMapper.toEntity(dayRequest);
     dayService.addDay(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Add DayName", HttpStatus.CREATED.value(),
         "Success", "DayName has been created.", null), HttpStatus.CREATED);
   }
 
   @PutMapping
   public ResponseEntity<ApiResponse> updateDay(@RequestBody @Valid DayRequest dayRequest) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Day entity = dayMapper.toEntity(dayRequest);
     dayService.updateDay(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Update DayName", HttpStatus.OK.value(),
         "Success", "DayName has been updated.", null), HttpStatus.OK);
   }
@@ -84,10 +76,9 @@ public class DayController extends BaseController {
   @DeleteMapping("/{id}")
   public ResponseEntity<ApiResponse> deleteDay(@PathVariable @Valid Long id) {
     String day_name = dayService.getDayNameByID(id);
-    start = new Date();
+    long start = System.currentTimeMillis();
     dayService.deleteDay(id);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Delete DayName", HttpStatus.OK.value(),
         "Success", day_name + " has been deleted.", null), HttpStatus.OK);
   }

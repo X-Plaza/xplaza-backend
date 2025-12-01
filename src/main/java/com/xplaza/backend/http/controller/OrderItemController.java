@@ -4,7 +4,6 @@
  */
 package com.xplaza.backend.http.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -23,6 +22,7 @@ import com.xplaza.backend.mapper.OrderItemMapper;
 import com.xplaza.backend.service.OrderItemService;
 import com.xplaza.backend.service.entity.OrderItem;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/order-items")
 public class OrderItemController extends BaseController {
@@ -34,9 +34,6 @@ public class OrderItemController extends BaseController {
     this.orderItemService = orderItemService;
     this.orderItemMapper = orderItemMapper;
   }
-
-  private Date start, end;
-  private Long responseTime;
 
   @GetMapping
   public ResponseEntity<List<OrderItemResponse>> getOrderItems() {
@@ -57,12 +54,11 @@ public class OrderItemController extends BaseController {
   @PostMapping
   public ResponseEntity<ApiResponse> createOrderItem(@Valid @RequestBody OrderItemRequest request)
       throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     OrderItem orderItem = orderItemMapper.toEntity(request);
     OrderItem createdOrderItem = orderItemService.addOrderItem(orderItem);
     OrderItemResponse response = orderItemMapper.toResponse(createdOrderItem);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     ObjectMapper mapper = new ObjectMapper();
     String responseData = mapper.writeValueAsString(response);
     ApiResponse apiResponse = new ApiResponse(
@@ -79,12 +75,11 @@ public class OrderItemController extends BaseController {
   public ResponseEntity<ApiResponse> updateOrderItem(
       @PathVariable Long id,
       @RequestBody @Valid OrderItemRequest request) throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     OrderItem orderItem = orderItemMapper.toEntity(request);
     OrderItem updatedOrderItem = orderItemService.updateOrderItem(id, orderItem);
     OrderItemResponse response = orderItemMapper.toResponse(updatedOrderItem);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     ObjectMapper mapper = new ObjectMapper();
     String responseData = mapper.writeValueAsString(response);
     ApiResponse apiResponse = new ApiResponse(
@@ -100,10 +95,9 @@ public class OrderItemController extends BaseController {
   @DeleteMapping("/{id}")
   public ResponseEntity<ApiResponse> deleteOrderItem(@PathVariable @Valid Long id) {
     String orderItemName = orderItemService.getOrderItemNameByID(id);
-    start = new Date();
+    long start = System.currentTimeMillis();
     orderItemService.deleteOrderItem(id);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     ApiResponse apiResponse = new ApiResponse(
         responseTime,
         "Delete Order Item",

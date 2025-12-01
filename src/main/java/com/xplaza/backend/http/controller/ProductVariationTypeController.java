@@ -4,7 +4,6 @@
  */
 package com.xplaza.backend.http.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -20,6 +19,7 @@ import com.xplaza.backend.mapper.ProductVariationTypeMapper;
 import com.xplaza.backend.service.ProductVariationTypeService;
 import com.xplaza.backend.service.entity.ProductVariationType;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/product-variation-types")
 public class ProductVariationTypeController extends BaseController {
@@ -27,8 +27,6 @@ public class ProductVariationTypeController extends BaseController {
   private ProductVariationTypeService prodVarTypeService;
   @Autowired
   private ProductVariationTypeMapper productVariationTypeMapper;
-  private Date start, end;
-  private Long responseTime;
 
   @GetMapping
   public ResponseEntity<List<ProductVariationTypeResponse>> getProductVarTypes() {
@@ -46,10 +44,9 @@ public class ProductVariationTypeController extends BaseController {
 
   @PostMapping
   public ResponseEntity<ApiResponse> addProductVarType(@RequestBody @Valid ProductVariationType productVariationType) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     prodVarTypeService.addProductVariationType(productVariationType);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Add Product Variation Type", HttpStatus.CREATED.value(),
         "Success", "Product Variation Type has been created.", null), HttpStatus.CREATED);
   }
@@ -57,20 +54,18 @@ public class ProductVariationTypeController extends BaseController {
   @PutMapping
   public ResponseEntity<ApiResponse> updateProductVarType(
       @RequestBody @Valid ProductVariationType productVariationType) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     prodVarTypeService.updateProductVariationType(productVariationType);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Update Product Variation Type", HttpStatus.OK.value(),
         "Success", "Product Variation Type has been updated.", null), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<ApiResponse> deleteProductVarType(@PathVariable @Valid Long id) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     prodVarTypeService.deleteProductVariationType(id);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Delete Product Variation Type", HttpStatus.OK.value(),
         "Success", "Product Variation Type has been deleted.", null), HttpStatus.OK);
   }

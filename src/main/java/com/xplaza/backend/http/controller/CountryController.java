@@ -29,11 +29,12 @@ import com.xplaza.backend.mapper.CountryMapper;
 import com.xplaza.backend.service.CountryService;
 import com.xplaza.backend.service.entity.Country;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/countries")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Country Management", description = "APIs for managing countries")
+@Tag(name = "Country Management [DEPRECATED]", description = "APIs for managing countries. Use V2 API instead.")
 public class CountryController extends BaseController {
   private final CountryService countryService;
   private final CountryMapper countryMapper;

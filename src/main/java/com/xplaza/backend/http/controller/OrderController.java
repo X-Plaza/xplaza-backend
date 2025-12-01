@@ -4,8 +4,6 @@
  */
 package com.xplaza.backend.http.controller;
 
-import java.util.Date;
-
 import jakarta.validation.Valid;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +26,7 @@ import com.xplaza.backend.service.PlatformInfoService;
 import com.xplaza.backend.service.RoleService;
 import com.xplaza.backend.service.entity.Order;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/orders")
 public class OrderController extends BaseController {
@@ -45,9 +44,6 @@ public class OrderController extends BaseController {
     this.orderMapper = orderMapper;
   }
 
-  private Date start, end;
-  private Long responseTime;
-
   @Operation(summary = "Get order by ID", description = "Retrieve a single order by its ID.")
   @ApiResponses({
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Order found and returned successfully."),
@@ -58,11 +54,10 @@ public class OrderController extends BaseController {
   public ResponseEntity<ApiResponse> getOrder(
       @Parameter(description = "ID of the order to retrieve", required = true) @PathVariable @Valid Long id)
       throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Order entity = orderService.getOrderById(id);
     OrderResponse dto = orderMapper.toResponse(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dto);
     ApiResponse response = new ApiResponse(responseTime, "Order By ID", HttpStatus.OK.value(), "Success", "", data);
     return ResponseEntity.ok(response);
@@ -77,12 +72,11 @@ public class OrderController extends BaseController {
   public ResponseEntity<ApiResponse> addOrder(
       @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Order request body", required = true) @RequestBody @Valid OrderRequest request)
       throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Order entity = orderMapper.toEntity(request);
     Order createdOrder = orderService.createOrder(entity);
     OrderResponse dto = orderMapper.toResponse(createdOrder);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dto);
     ApiResponse response = new ApiResponse(responseTime, "Add Order", HttpStatus.CREATED.value(), "Success",
         "Order has been created.", data);
@@ -99,11 +93,10 @@ public class OrderController extends BaseController {
   public ResponseEntity<ApiResponse> updateOrder(
       @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Order request body", required = true) @RequestBody @Valid OrderRequest request)
       throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Order entity = orderMapper.toEntity(request);
     orderService.updateOrder(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     ApiResponse response = new ApiResponse(responseTime, "Update Order", HttpStatus.OK.value(), "Success",
         "Order has been updated.", null);
     return ResponseEntity.ok(response);
@@ -118,10 +111,9 @@ public class OrderController extends BaseController {
   @DeleteMapping("/{id}")
   public ResponseEntity<ApiResponse> deleteOrder(
       @Parameter(description = "ID of the order to delete", required = true) @PathVariable @Valid Long id) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     orderService.deleteOrder(id);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     ApiResponse response = new ApiResponse(responseTime, "Delete Order", HttpStatus.OK.value(), "Success",
         "Order has been deleted.", null);
     return ResponseEntity.ok(response);

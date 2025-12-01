@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.CustomerDao;
 import com.xplaza.backend.jpa.repository.CustomerRepository;
 import com.xplaza.backend.jpa.repository.CustomerUserRepository;
@@ -56,6 +57,6 @@ public class CustomerUserService {
 
   public Customer getCustomer(Long id) {
     return customerMapper.toEntityFromDao(customerRepo.findById(id).orElseThrow(
-        () -> new RuntimeException("Customer not found with id: " + id)));
+        () -> new ResourceNotFoundException("Customer not found with id: " + id)));
   }
 }

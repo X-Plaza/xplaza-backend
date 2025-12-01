@@ -1,39 +1,41 @@
-[![Main](https://github.com/kirjaswappi/kirjaswappi-backend/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/x-plaza/xplaza-backend/actions/workflows/main.yml)
+[![Main](https://github.com/x-plaza/xplaza-backend/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/x-plaza/xplaza-backend/actions/workflows/main.yml)
 
-# X-Plaza Backend Service
+# X-Plaza Backend
 
-This repository contains the `backend` service for the X-Plaza Platform. The X-Plaza backend service is a [Spring Boot](https://spring.io/projects/spring-boot) Application.
+Spring Boot backend for X-Plaza e-commerce platform.
 
-## Local Development Setup
+## Prerequisites
 
-To start developing, you first need to set up your local machine with JDK 21.
+- Java 24+
+- Maven 3.9+
 
-To build the application and run all tests, execute
+## Quick Start
 
-```console
-mvn clean package
+```bash
+# Run locally (H2 database)
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+
+# Run tests
+./mvnw test
+
+# Format code
+./mvnw spotless:apply
 ```
 
-To run the application, you can run
+## API
 
-```console
-mvn spring-boot:run
-```
+- **V2 (current)**: `/api/v2/*` - Use this
+- **V1 (deprecated)**: `/api/v1/*` - Being phased out
 
-To format the source code, you can run
+Swagger UI: http://localhost:8080/swagger-ui/index.html
 
-```console
-mvn spotless:apply
-```
+## Config
 
-This will run the application with the spring `local` profile with an embedded [H2 database](https://www.h2database.com/html/main.html) and unsecured HTTP Endpoints.
+| Profile | Database | Use Case |
+|---------|----------|----------|
+| `local` | H2 (in-memory) | Development |
+| `cloud` | PostgreSQL | Production |
 
-```console
-mvn spring-boot:run -Dspring-boot.run.profiles=local
-```
+---
 
-The H2 local database file has the advantage to be used in IDE's directly.
-
-## API documentation
-
-API documentation is available on: [Swagger](https://api.xplaza.shop/swagger-ui/index.html).
+© 2025 Xplaza or Xplaza affiliate company. All rights reserved.

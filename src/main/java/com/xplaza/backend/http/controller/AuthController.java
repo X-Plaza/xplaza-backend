@@ -21,17 +21,20 @@ import org.springframework.web.bind.annotation.*;
 import com.xplaza.backend.common.util.JwtUtil;
 import com.xplaza.backend.http.dto.request.AuthenticationRequest;
 import com.xplaza.backend.http.dto.response.AuthenticationResponse;
+import com.xplaza.backend.service.AdminUserLoginService;
 import com.xplaza.backend.service.AuthUserDetailsService;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/authenticate")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Authentication", description = "APIs for user authentication and authorization")
+@Tag(name = "Authentication [DEPRECATED]", description = "APIs for user authentication and authorization. Use V2 API instead.")
 public class AuthController extends BaseController {
 
   private final JwtUtil jwtTokenUtil;
   private final AuthUserDetailsService authUserDetailsService;
+  private final AdminUserLoginService adminUserLoginService;
 
   @PostMapping
   @Operation(summary = "User authentication", description = "Authenticates a user with username and password and returns JWT tokens", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Authentication credentials", required = true, content = @Content(schema = @Schema(implementation = AuthenticationRequest.class))), responses = {
@@ -43,7 +46,16 @@ public class AuthController extends BaseController {
   public ResponseEntity<AuthenticationResponse> createAuthenticationToken(
       @Valid @RequestBody AuthenticationRequest authenticationRequest) {
     try {
-      UserDetails userDetails = authUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+      String username = authenticationRequest.getUsername();
+      String password = authenticationRequest.getPassword();
+
+      // Verify credentials before generating tokens
+      if (!adminUserLoginService.isValidAdminUser(username, password)) {
+        log.warn("Authentication failed for user: {}", username);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      }
+
+      UserDetails userDetails = authUserDetailsService.loadUserByUsername(username);
       String jwtToken = jwtTokenUtil.generateJwtToken(userDetails);
       String refreshToken = jwtTokenUtil.generateRefreshToken(userDetails);
       return ResponseEntity.ok(new AuthenticationResponse(jwtToken, refreshToken));

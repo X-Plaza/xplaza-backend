@@ -29,11 +29,12 @@ import com.xplaza.backend.mapper.CityMapper;
 import com.xplaza.backend.service.CityService;
 import com.xplaza.backend.service.entity.City;
 
+@Deprecated(since = "1.0", forRemoval = true)
 @RestController
 @RequestMapping("/api/v1/cities")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "City Management", description = "APIs for managing cities")
+@Tag(name = "City Management [DEPRECATED]", description = "APIs for managing cities. Use V2 API instead.")
 public class CityController extends BaseController {
   private final CityService cityService;
   private final CityMapper cityMapper;

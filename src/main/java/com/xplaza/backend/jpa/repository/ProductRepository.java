@@ -5,49 +5,96 @@
 package com.xplaza.backend.jpa.repository;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.xplaza.backend.jpa.dao.ProductDao;
 
 public interface ProductRepository extends JpaRepository<ProductDao, Long> {
-  @Query(value = "select product_name from products where product_id = ?1", nativeQuery = true)
-  String getName(Long id);
 
-  @Query(value = "select * from products where product_id = ?1", nativeQuery = true)
-  ProductDao findProductById(Long id);
+  // JPQL query - more portable than native SQL
+  @Query("SELECT p.productName FROM ProductDao p WHERE p.productId = :id")
+  String getName(@Param("id") Long id);
+
+  // Use Optional for better null handling
+  Optional<ProductDao> findByProductId(Long productId);
+
+  // Legacy method for backward compatibility - returns null instead of Optional
+  default ProductDao findProductById(Long productId) {
+    return findByProductId(productId).orElse(null);
+  }
+
+  // Check existence before operations
+  boolean existsByProductId(Long productId);
 
   @Modifying
   @Transactional
-  @Query(value = "update products set quantity = ?2 where product_id = ?1", nativeQuery = true)
-  void updateInventory(Long id, int quantity);
+  @Query("UPDATE ProductDao p SET p.quantity = :quantity WHERE p.productId = :id")
+  void updateInventory(@Param("id") Long id, @Param("quantity") int quantity);
 
+  // Pagination support - using native query because of link table
   @Query(value = "SELECT p.* FROM products p " +
       "JOIN shops s ON p.shop_id = s.shop_id " +
-      "JOIN shop_users su ON s.shop_id = su.shop_id " +
-      "WHERE su.user_id = ?1", nativeQuery = true)
-  List<ProductDao> findByUserId(Long userId);
+      "JOIN admin_user_shop_link ausl ON s.shop_id = ausl.shop_id " +
+      "WHERE ausl.admin_user_id = :userId", nativeQuery = true)
+  Page<ProductDao> findByUserId(@Param("userId") Long userId, Pageable pageable);
 
+  // Non-paginated version for backward compatibility - using native query
   @Query(value = "SELECT p.* FROM products p " +
-      "WHERE p.shop_id = ?1", nativeQuery = true)
-  List<ProductDao> findByShopId(Long shopId);
+      "JOIN shops s ON p.shop_id = s.shop_id " +
+      "JOIN admin_user_shop_link ausl ON s.shop_id = ausl.shop_id " +
+      "WHERE ausl.admin_user_id = :userId", nativeQuery = true)
+  List<ProductDao> findByUserId(@Param("userId") Long userId);
 
-  @Query(value = "SELECT p.* FROM products p " +
-      "WHERE p.category_id = ?1", nativeQuery = true)
-  List<ProductDao> findByCategoryId(Long categoryId);
+  // Pagination support
+  Page<ProductDao> findByShopShopId(Long shopId, Pageable pageable);
 
-  @Query(value = "SELECT p.* FROM products p " +
-      "WHERE p.brand_id = ?1", nativeQuery = true)
-  List<ProductDao> findByBrandId(Long brandId);
+  // Non-paginated versions using Spring Data derived queries
+  List<ProductDao> findByShopShopId(Long shopId);
 
-  @Query(value = "SELECT p.* FROM products p " +
-      "WHERE p.shop_id = ?1 AND p.category_id = ?2", nativeQuery = true)
-  List<ProductDao> findByShopIdAndCategoryId(Long shopId, Long categoryId);
+  Page<ProductDao> findByCategoryCategoryId(Long categoryId, Pageable pageable);
 
-  @Query(value = "SELECT p.* FROM products p " +
-      "WHERE p.shop_id = ?1 AND p.is_trending = true", nativeQuery = true)
-  List<ProductDao> findTrendingByShopId(Long shopId);
+  List<ProductDao> findByCategoryCategoryId(Long categoryId);
+
+  Page<ProductDao> findByBrandBrandId(Long brandId, Pageable pageable);
+
+  List<ProductDao> findByBrandBrandId(Long brandId);
+
+  // Combined filters with pagination
+  Page<ProductDao> findByShopShopIdAndCategoryCategoryId(Long shopId, Long categoryId, Pageable pageable);
+
+  List<ProductDao> findByShopShopIdAndCategoryCategoryId(Long shopId, Long categoryId);
+
+  // Search by name with pagination
+  Page<ProductDao> findByProductNameContainingIgnoreCase(String productName, Pageable pageable);
+
+  List<ProductDao> findByProductNameContainingIgnoreCase(String productName);
+
+  // Legacy method names for backward compatibility
+  default List<ProductDao> findByShopId(Long shopId) {
+    return findByShopShopId(shopId);
+  }
+
+  default List<ProductDao> findByCategoryId(Long categoryId) {
+    return findByCategoryCategoryId(categoryId);
+  }
+
+  default List<ProductDao> findByBrandId(Long brandId) {
+    return findByBrandBrandId(brandId);
+  }
+
+  default List<ProductDao> findByShopIdAndCategoryId(Long shopId, Long categoryId) {
+    return findByShopShopIdAndCategoryCategoryId(shopId, categoryId);
+  }
+
+  // Deprecated - use findByShopShopId with isTrending filter instead
+  @Query("SELECT p FROM ProductDao p WHERE p.shop.shopId = :shopId")
+  List<ProductDao> findTrendingByShopId(@Param("shopId") Long shopId);
 }
