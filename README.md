@@ -102,6 +102,23 @@ API documentation is available on Swagger UI:
 - **Production**: [https://api.xplaza.shop/swagger-ui/index.html](https://api.xplaza.shop/swagger-ui/index.html)
 - **Local**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
+### API Versions
+
+| Version | Status | Base Path | Notes |
+|---------|--------|-----------|-------|
+| V1 | ⚠️ Deprecated | `/api/v1/*` | Legacy endpoints, will be removed |
+| V2 | ✅ Current | `/api/v2/*` | Clean REST API with pagination |
+
+> **Note:** V1 endpoints are deprecated and marked for removal. Please migrate to V2 API.
+
+## Project Documentation
+
+Additional documentation is available in the [`docs/`](docs/) folder:
+
+- [API Refactoring Strategy](docs/API_REFACTORING_STRATEGY.md) - V2 API design and migration guide
+- [Code Review Findings](docs/CODE_REVIEW_FINDINGS.md) - Initial code review and issues found
+- [Refactoring Todo](docs/REFACTORING_TODO.md) - Task list and progress tracking
+
 ## Configuration
 
 Key configuration files:
