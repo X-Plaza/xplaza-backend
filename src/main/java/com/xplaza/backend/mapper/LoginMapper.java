@@ -6,8 +6,8 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 
+import com.xplaza.backend.domain.Login;
 import com.xplaza.backend.jpa.dao.LoginDao;
-import com.xplaza.backend.service.entity.Login;
 
 @Mapper(componentModel = "spring")
 public interface LoginMapper {

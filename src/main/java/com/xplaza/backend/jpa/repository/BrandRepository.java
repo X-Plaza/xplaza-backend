@@ -31,6 +31,6 @@ public interface BrandRepository extends JpaRepository<BrandDao, Long> {
     return existsByBrandName(name);
   }
 
-  // V2: Search by name (case-insensitive)
+  // Search by name (case-insensitive)
   Page<BrandDao> findByBrandNameContainingIgnoreCase(String brandName, Pageable pageable);
 }

@@ -7,10 +7,10 @@ package com.xplaza.backend.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.xplaza.backend.domain.State;
 import com.xplaza.backend.http.dto.request.StateRequest;
 import com.xplaza.backend.http.dto.response.StateResponse;
 import com.xplaza.backend.jpa.dao.StateDao;
-import com.xplaza.backend.service.entity.State;
 
 @Mapper(componentModel = "spring")
 public interface StateMapper {

@@ -6,11 +6,11 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 
+import com.xplaza.backend.domain.Day;
+import com.xplaza.backend.domain.DeliverySchedule;
 import com.xplaza.backend.http.dto.request.DeliveryScheduleRequest;
 import com.xplaza.backend.http.dto.response.DeliveryScheduleResponse;
 import com.xplaza.backend.jpa.dao.DeliveryScheduleDao;
-import com.xplaza.backend.service.entity.Day;
-import com.xplaza.backend.service.entity.DeliverySchedule;
 
 @Mapper(componentModel = "spring")
 public interface DeliveryScheduleMapper {

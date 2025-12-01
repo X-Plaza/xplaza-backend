@@ -6,10 +6,10 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 
+import com.xplaza.backend.domain.PlatformInfo;
 import com.xplaza.backend.http.dto.request.PlatformInfoRequest;
 import com.xplaza.backend.http.dto.response.PlatformInfoResponse;
 import com.xplaza.backend.jpa.dao.PlatformInfoDao;
-import com.xplaza.backend.service.entity.PlatformInfo;
 
 @Mapper(componentModel = "spring")
 public interface PlatformInfoMapper {

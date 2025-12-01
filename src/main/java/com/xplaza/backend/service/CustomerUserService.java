@@ -6,30 +6,24 @@ package com.xplaza.backend.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.Customer;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.CustomerDao;
 import com.xplaza.backend.jpa.repository.CustomerRepository;
 import com.xplaza.backend.jpa.repository.CustomerUserRepository;
 import com.xplaza.backend.mapper.CustomerMapper;
-import com.xplaza.backend.service.entity.Customer;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerUserService {
   private final CustomerUserRepository customerUserRepo;
   private final CustomerRepository customerRepo;
   private final CustomerMapper customerMapper;
-
-  @Autowired
-  public CustomerUserService(CustomerUserRepository customerUserRepo, CustomerRepository customerRepo,
-      CustomerMapper customerMapper) {
-    this.customerUserRepo = customerUserRepo;
-    this.customerRepo = customerRepo;
-    this.customerMapper = customerMapper;
-  }
 
   @Transactional
   public void updateCustomer(Customer entity) {

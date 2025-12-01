@@ -4,32 +4,25 @@
  */
 package com.xplaza.backend.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import com.xplaza.backend.domain.ConfirmationToken;
+import com.xplaza.backend.domain.PlatformInfo;
 import com.xplaza.backend.jpa.repository.ConfirmationTokenRepository;
 import com.xplaza.backend.mapper.ConfirmationTokenMapper;
-import com.xplaza.backend.service.entity.ConfirmationToken;
-import com.xplaza.backend.service.entity.PlatformInfo;
 
 @Service
+@RequiredArgsConstructor
 public class ConfirmationTokenService {
   private final ConfirmationTokenRepository confirmationTokenRepo;
-  @Autowired
-  private EmailSenderService emailSenderService;
-  @Autowired
-  private PlatformInfoService platformInfoService;
-  @Autowired
-  private ConfirmationTokenMapper confirmationTokenMapper;
-  @Autowired
-  private Environment env;
-
-  @Autowired
-  public ConfirmationTokenService(ConfirmationTokenRepository confirmationTokenRepo) {
-    this.confirmationTokenRepo = confirmationTokenRepo;
-  }
+  private final EmailSenderService emailSenderService;
+  private final PlatformInfoService platformInfoService;
+  private final ConfirmationTokenMapper confirmationTokenMapper;
+  private final Environment env;
 
   public ConfirmationToken getConfirmationToken(String confirmationToken) {
     return confirmationTokenMapper.toEntityFromDao(confirmationTokenRepo.findByConfirmationToken(confirmationToken));

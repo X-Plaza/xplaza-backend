@@ -7,25 +7,20 @@ package com.xplaza.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
+import com.xplaza.backend.domain.DeliverySchedule;
 import com.xplaza.backend.jpa.dao.DeliveryScheduleDao;
 import com.xplaza.backend.jpa.repository.DeliveryScheduleRepository;
 import com.xplaza.backend.mapper.DeliveryScheduleMapper;
-import com.xplaza.backend.service.entity.DeliverySchedule;
 
 @Service
+@RequiredArgsConstructor
 public class DeliveryScheduleService {
   private final DeliveryScheduleRepository deliveryScheduleRepo;
   private final DeliveryScheduleMapper deliveryScheduleMapper;
-
-  @Autowired
-  public DeliveryScheduleService(DeliveryScheduleRepository deliveryScheduleRepo,
-      DeliveryScheduleMapper deliveryScheduleMapper) {
-    this.deliveryScheduleRepo = deliveryScheduleRepo;
-    this.deliveryScheduleMapper = deliveryScheduleMapper;
-  }
 
   public void addSchedule(DeliverySchedule entity) {
     DeliveryScheduleDao dao = deliveryScheduleMapper.toDao(entity);

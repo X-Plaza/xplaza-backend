@@ -4,38 +4,27 @@
  */
 package com.xplaza.backend.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import com.xplaza.backend.common.util.ValidationUtil;
+import com.xplaza.backend.domain.Customer;
+import com.xplaza.backend.domain.PlatformInfo;
 import com.xplaza.backend.jpa.dao.CustomerDao;
-import com.xplaza.backend.jpa.repository.CustomerRepository;
 import com.xplaza.backend.jpa.repository.CustomerSignupRepository;
 import com.xplaza.backend.mapper.CustomerMapper;
-import com.xplaza.backend.service.entity.Customer;
-import com.xplaza.backend.service.entity.PlatformInfo;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerSignupService {
-  private final CustomerRepository customerRepo;
   private final CustomerSignupRepository customerSignupRepo;
   private final CustomerMapper customerMapper;
-  @Autowired
-  private EmailSenderService emailSenderService;
-  @Autowired
-  private PlatformInfoService platformInfoService;
-  @Autowired
-  private Environment env;
-
-  @Autowired
-  public CustomerSignupService(CustomerRepository customerRepo, CustomerSignupRepository customerSignupRepo,
-      CustomerMapper customerMapper) {
-    this.customerRepo = customerRepo;
-    this.customerSignupRepo = customerSignupRepo;
-    this.customerMapper = customerMapper;
-  }
+  private final EmailSenderService emailSenderService;
+  private final PlatformInfoService platformInfoService;
+  private final Environment env;
 
   public void signupCustomer(Customer customer) {
     // Validate input

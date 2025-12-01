@@ -7,10 +7,10 @@ package com.xplaza.backend.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.xplaza.backend.domain.Brand;
 import com.xplaza.backend.http.dto.request.BrandRequest;
 import com.xplaza.backend.http.dto.response.BrandResponse;
 import com.xplaza.backend.jpa.dao.BrandDao;
-import com.xplaza.backend.service.entity.Brand;
 
 @Mapper(componentModel = "spring")
 public interface BrandMapper {

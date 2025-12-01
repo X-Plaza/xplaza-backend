@@ -7,25 +7,21 @@ package com.xplaza.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.Day;
 import com.xplaza.backend.jpa.dao.DayDao;
 import com.xplaza.backend.jpa.repository.DayRepository;
 import com.xplaza.backend.mapper.DayMapper;
-import com.xplaza.backend.service.entity.Day;
 
 @Service
+@RequiredArgsConstructor
 public class DayService {
   private final DayRepository dayRepo;
   private final DayMapper dayMapper;
-
-  @Autowired
-  public DayService(DayRepository dayRepo, DayMapper dayMapper) {
-    this.dayRepo = dayRepo;
-    this.dayMapper = dayMapper;
-  }
 
   @Transactional
   public void addDay(Day entity) {

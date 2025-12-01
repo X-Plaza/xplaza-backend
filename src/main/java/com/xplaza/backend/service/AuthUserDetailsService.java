@@ -6,28 +6,24 @@ package com.xplaza.backend.service;
 
 import java.util.ArrayList;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.xplaza.backend.domain.AdminUser;
 import com.xplaza.backend.jpa.repository.AdminUserRepository;
 import com.xplaza.backend.mapper.AdminUserMapper;
-import com.xplaza.backend.service.entity.AdminUser;
 
 @Service
+@RequiredArgsConstructor
 public class AuthUserDetailsService implements UserDetailsService {
 
   private final AdminUserRepository adminUserRepository;
   private final AdminUserMapper adminUserMapper;
-
-  @Autowired
-  public AuthUserDetailsService(AdminUserRepository adminUserRepository, AdminUserMapper adminUserMapper) {
-    this.adminUserRepository = adminUserRepository;
-    this.adminUserMapper = adminUserMapper;
-  }
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -11,14 +11,14 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import com.xplaza.backend.domain.AdminUser;
+import com.xplaza.backend.domain.AdminUserShopLink;
+import com.xplaza.backend.domain.Shop;
 import com.xplaza.backend.http.dto.request.AdminUserRequest;
 import com.xplaza.backend.http.dto.response.AdminUserResponse;
 import com.xplaza.backend.jpa.dao.AdminUserDao;
 import com.xplaza.backend.jpa.dao.AdminUserShopLinkDao;
 import com.xplaza.backend.jpa.dao.ShopDao;
-import com.xplaza.backend.service.entity.AdminUser;
-import com.xplaza.backend.service.entity.AdminUserShopLink;
-import com.xplaza.backend.service.entity.Shop;
 
 @Mapper(componentModel = "spring")
 public interface AdminUserMapper {

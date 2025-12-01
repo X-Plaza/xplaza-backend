@@ -7,29 +7,25 @@ package com.xplaza.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.xplaza.backend.common.util.ValidationUtil;
+import com.xplaza.backend.domain.Shop;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.ShopDao;
 import com.xplaza.backend.jpa.repository.ShopRepository;
 import com.xplaza.backend.mapper.ShopMapper;
-import com.xplaza.backend.service.entity.Shop;
 
 @Service
+@RequiredArgsConstructor
 public class ShopService {
   private final ShopRepository shopRepo;
   private final ShopMapper shopMapper;
-
-  @Autowired
-  public ShopService(ShopRepository shopRepo, ShopMapper shopMapper) {
-    this.shopRepo = shopRepo;
-    this.shopMapper = shopMapper;
-  }
 
   @Transactional
   public Shop addShop(Shop shop) {
@@ -96,7 +92,7 @@ public class ShopService {
         .collect(Collectors.toList());
   }
 
-  // ===== V2 Paginated Methods =====
+  // ===== Paginated Methods =====
 
   public Page<Shop> listShopsPaginated(Pageable pageable) {
     return shopRepo.findAll(pageable)

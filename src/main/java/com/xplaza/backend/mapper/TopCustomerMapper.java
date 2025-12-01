@@ -7,8 +7,8 @@ package com.xplaza.backend.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.xplaza.backend.domain.TopCustomer;
 import com.xplaza.backend.jpa.dao.TopCustomerDao;
-import com.xplaza.backend.service.entity.TopCustomer;
 
 @Mapper(componentModel = "spring")
 public interface TopCustomerMapper {

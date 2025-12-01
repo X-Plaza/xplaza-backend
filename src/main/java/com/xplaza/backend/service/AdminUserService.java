@@ -7,36 +7,28 @@ package com.xplaza.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.AdminUser;
+import com.xplaza.backend.domain.PlatformInfo;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.AdminUserDao;
 import com.xplaza.backend.jpa.repository.AdminUserRepository;
 import com.xplaza.backend.mapper.AdminUserMapper;
-import com.xplaza.backend.service.entity.AdminUser;
-import com.xplaza.backend.service.entity.PlatformInfo;
 
 @Service
+@RequiredArgsConstructor
 public class AdminUserService {
   private final AdminUserRepository adminUserRepository;
   private final AdminUserMapper adminUserMapper;
   private final EmailSenderService emailSenderService;
   private final PlatformInfoService platformInfoService;
   private final Environment env;
-
-  @Autowired
-  public AdminUserService(AdminUserRepository adminUserRepository, AdminUserMapper adminUserMapper,
-      EmailSenderService emailSenderService, PlatformInfoService platformInfoService, Environment env) {
-    this.adminUserRepository = adminUserRepository;
-    this.adminUserMapper = adminUserMapper;
-    this.emailSenderService = emailSenderService;
-    this.platformInfoService = platformInfoService;
-    this.env = env;
-  }
 
   @Transactional
   public void addAdminUser(AdminUser entity) {

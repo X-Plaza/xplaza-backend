@@ -9,26 +9,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.xplaza.backend.common.util.DateConverter;
+import com.xplaza.backend.domain.Coupon;
 import com.xplaza.backend.jpa.dao.CouponDao;
 import com.xplaza.backend.jpa.repository.CouponRepository;
 import com.xplaza.backend.mapper.CouponMapper;
-import com.xplaza.backend.service.entity.Coupon;
 
 @Service
-public class CouponService extends DateConverter {
+@RequiredArgsConstructor
+public class CouponService {
   private final CouponRepository couponRepo;
   private final CouponMapper couponMapper;
-
-  @Autowired
-  public CouponService(CouponRepository couponRepo, CouponMapper couponMapper) {
-    this.couponRepo = couponRepo;
-    this.couponMapper = couponMapper;
-  }
 
   @Transactional
   public void addCoupon(Coupon entity) {

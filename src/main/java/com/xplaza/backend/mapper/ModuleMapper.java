@@ -6,10 +6,10 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 
+import com.xplaza.backend.domain.Module;
 import com.xplaza.backend.http.dto.request.ModuleRequest;
 import com.xplaza.backend.http.dto.response.ModuleResponse;
 import com.xplaza.backend.jpa.dao.ModuleDao;
-import com.xplaza.backend.service.entity.Module;
 
 @Mapper(componentModel = "spring")
 public interface ModuleMapper {

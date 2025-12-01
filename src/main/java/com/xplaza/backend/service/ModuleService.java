@@ -7,26 +7,22 @@ package com.xplaza.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.Module;
 import com.xplaza.backend.jpa.dao.ModuleDao;
 import com.xplaza.backend.jpa.repository.ModuleRepository;
 import com.xplaza.backend.mapper.ModuleMapper;
-import com.xplaza.backend.service.entity.Module;
 
 @Service
+@RequiredArgsConstructor
 public class ModuleService {
   private final ModuleRepository moduleRepo;
   private final ModuleMapper moduleMapper;
-
-  @Autowired
-  public ModuleService(ModuleRepository moduleRepo, ModuleMapper moduleMapper) {
-    this.moduleRepo = moduleRepo;
-    this.moduleMapper = moduleMapper;
-  }
 
   @Transactional
   public void addModule(Module module) {

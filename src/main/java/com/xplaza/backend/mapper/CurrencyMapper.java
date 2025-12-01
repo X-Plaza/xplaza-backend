@@ -7,10 +7,10 @@ package com.xplaza.backend.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.xplaza.backend.domain.Currency;
 import com.xplaza.backend.http.dto.request.CurrencyRequest;
 import com.xplaza.backend.http.dto.response.CurrencyResponse;
 import com.xplaza.backend.jpa.dao.CurrencyDao;
-import com.xplaza.backend.service.entity.Currency;
 
 @Mapper(componentModel = "spring")
 public interface CurrencyMapper {

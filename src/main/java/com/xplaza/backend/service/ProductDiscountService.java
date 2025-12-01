@@ -7,11 +7,13 @@ package com.xplaza.backend.service;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.xplaza.backend.common.util.DateConverter;
+import com.xplaza.backend.domain.ProductDiscount;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.exception.ValidationException;
 import com.xplaza.backend.jpa.dao.ProductDao;
@@ -19,22 +21,15 @@ import com.xplaza.backend.jpa.dao.ProductDiscountDao;
 import com.xplaza.backend.jpa.repository.ProductDiscountRepository;
 import com.xplaza.backend.jpa.repository.ProductRepository;
 import com.xplaza.backend.mapper.ProductDiscountMapper;
-import com.xplaza.backend.service.entity.ProductDiscount;
-// import com.xplaza.backend.service.entity.ProductDiscountList;
+// import com.xplaza.backend.domain.ProductDiscountList;
 
 @Service
-public class ProductDiscountService extends DateConverter {
+@RequiredArgsConstructor
+public class ProductDiscountService {
   private final ProductDiscountRepository productDiscountRepository;
   private final ProductRepository productRepo;
   private final ProductDiscountMapper productDiscountMapper;
-
-  @Autowired
-  public ProductDiscountService(ProductDiscountRepository productDiscountRepository, ProductRepository productRepo,
-      ProductDiscountMapper productDiscountMapper) {
-    this.productDiscountRepository = productDiscountRepository;
-    this.productRepo = productRepo;
-    this.productDiscountMapper = productDiscountMapper;
-  }
+  private final DateConverter dateConverter;
 
   public boolean checkDiscountValidity(ProductDiscount entity) {
     if (entity == null) {
@@ -106,15 +101,15 @@ public class ProductDiscountService extends DateConverter {
   // }
 
   public boolean checkDiscountDateValidity(ProductDiscount entity) {
-    Date current_date = new Date();
-    current_date = convertDateToStartOfTheDay(current_date);
-    Date start_date = entity.getValidFrom();
-    Date end_date = entity.getValidTo();
-    if (current_date.after(start_date))
+    Date currentDate = new Date();
+    currentDate = dateConverter.convertDateToStartOfTheDay(currentDate);
+    Date startDate = entity.getValidFrom();
+    Date endDate = entity.getValidTo();
+    if (currentDate.after(startDate))
       return false;
-    if (current_date.after(end_date))
+    if (currentDate.after(endDate))
       return false;
-    if (start_date.after(end_date))
+    if (startDate.after(endDate))
       return false;
     return true;
   }

@@ -31,11 +31,11 @@ public interface ShopRepository extends JpaRepository<ShopDao, Long> {
   @Query(value = "SELECT * FROM shops WHERE shop_owner = :ownerId", nativeQuery = true)
   List<ShopDao> findByShopOwnerId(@Param("ownerId") Long ownerId);
 
-  // V2: Paginated version for owner
+  // Paginated version for owner
   @Query(value = "SELECT * FROM shops WHERE shop_owner = :ownerId", countQuery = "SELECT COUNT(*) FROM shops WHERE shop_owner = :ownerId", nativeQuery = true)
   Page<ShopDao> findByShopOwnerIdPaginated(@Param("ownerId") Long ownerId, Pageable pageable);
 
-  // V2: Search by name (case-insensitive)
+  // Search by name (case-insensitive)
   Page<ShopDao> findByShopNameContainingIgnoreCase(String shopName, Pageable pageable);
 
   // Legacy methods for backward compatibility

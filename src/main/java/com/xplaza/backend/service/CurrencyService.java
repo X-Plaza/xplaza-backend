@@ -6,27 +6,23 @@ package com.xplaza.backend.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.Currency;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.CurrencyDao;
 import com.xplaza.backend.jpa.repository.CurrencyRepository;
 import com.xplaza.backend.mapper.CurrencyMapper;
-import com.xplaza.backend.service.entity.Currency;
 
 @Service
+@RequiredArgsConstructor
 public class CurrencyService {
 
   private final CurrencyRepository currencyRepo;
   private final CurrencyMapper currencyMapper;
-
-  @Autowired
-  public CurrencyService(CurrencyRepository currencyRepo, CurrencyMapper currencyMapper) {
-    this.currencyRepo = currencyRepo;
-    this.currencyMapper = currencyMapper;
-  }
 
   @Transactional
   public Currency addCurrency(Currency currency) {

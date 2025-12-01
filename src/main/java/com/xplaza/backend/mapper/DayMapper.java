@@ -6,10 +6,10 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 
+import com.xplaza.backend.domain.Day;
 import com.xplaza.backend.http.dto.request.DayRequest;
 import com.xplaza.backend.http.dto.response.DayResponse;
 import com.xplaza.backend.jpa.dao.DayDao;
-import com.xplaza.backend.service.entity.Day;
 
 @Mapper(componentModel = "spring")
 public interface DayMapper {

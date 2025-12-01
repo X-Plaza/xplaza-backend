@@ -7,10 +7,10 @@ package com.xplaza.backend.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.xplaza.backend.domain.Country;
 import com.xplaza.backend.http.dto.request.CountryRequest;
 import com.xplaza.backend.http.dto.response.CountryResponse;
 import com.xplaza.backend.jpa.dao.CountryDao;
-import com.xplaza.backend.service.entity.Country;
 
 @Mapper(componentModel = "spring")
 public interface CountryMapper {

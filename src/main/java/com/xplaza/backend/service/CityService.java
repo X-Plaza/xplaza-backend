@@ -7,29 +7,24 @@ package com.xplaza.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.City;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.CityDao;
 import com.xplaza.backend.jpa.repository.CityRepository;
 import com.xplaza.backend.mapper.CityMapper;
 import com.xplaza.backend.mapper.LocationMapper;
-import com.xplaza.backend.service.entity.City;
 
 @Service
+@RequiredArgsConstructor
 public class CityService {
   private final CityRepository cityRepo;
   private final CityMapper cityMapper;
   private final LocationMapper locationMapper;
-
-  @Autowired
-  public CityService(CityRepository cityRepo, CityMapper cityMapper, LocationMapper locationMapper) {
-    this.cityRepo = cityRepo;
-    this.cityMapper = cityMapper;
-    this.locationMapper = locationMapper;
-  }
 
   @Transactional
   public City addCity(City city) {

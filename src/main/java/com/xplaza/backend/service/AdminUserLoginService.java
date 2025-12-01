@@ -6,31 +6,24 @@ package com.xplaza.backend.service;
 
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.AdminUser;
+import com.xplaza.backend.domain.Login;
 import com.xplaza.backend.jpa.repository.LoginRepository;
 import com.xplaza.backend.mapper.LoginMapper;
-import com.xplaza.backend.service.entity.AdminUser;
-import com.xplaza.backend.service.entity.Login;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class AdminUserLoginService {
   private final AdminUserService adminUserService;
   private final SecurityService securityService;
   private final LoginRepository loginRepo;
   private final LoginMapper loginMapper;
-
-  @Autowired
-  public AdminUserLoginService(AdminUserService adminUserService, SecurityService securityService,
-      LoginRepository loginRepo, LoginMapper loginMapper) {
-    this.adminUserService = adminUserService;
-    this.securityService = securityService;
-    this.loginRepo = loginRepo;
-    this.loginMapper = loginMapper;
-  }
 
   public boolean isValidAdminUser(String username, String password) {
     AdminUser adminUser = adminUserService.listAdminUser(username);

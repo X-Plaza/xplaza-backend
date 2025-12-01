@@ -6,10 +6,10 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 
+import com.xplaza.backend.domain.Coupon;
 import com.xplaza.backend.http.dto.request.CouponRequest;
 import com.xplaza.backend.http.dto.response.CouponResponse;
 import com.xplaza.backend.jpa.dao.CouponDao;
-import com.xplaza.backend.service.entity.Coupon;
 
 @Mapper(componentModel = "spring")
 public interface CouponMapper {

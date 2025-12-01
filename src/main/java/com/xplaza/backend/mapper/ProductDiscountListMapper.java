@@ -6,8 +6,8 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 
+import com.xplaza.backend.domain.ProductDiscountList;
 import com.xplaza.backend.jpa.dao.ProductDiscountListDao;
-import com.xplaza.backend.service.entity.ProductDiscountList;
 
 @Mapper(componentModel = "spring")
 public interface ProductDiscountListMapper {

@@ -7,10 +7,10 @@ package com.xplaza.backend.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.xplaza.backend.domain.ProductImage;
 import com.xplaza.backend.http.dto.request.ProductImageRequest;
 import com.xplaza.backend.http.dto.response.ProductImageResponse;
 import com.xplaza.backend.jpa.dao.ProductImageDao;
-import com.xplaza.backend.service.entity.ProductImage;
 
 @Mapper(componentModel = "spring")
 public interface ProductImageMapper {

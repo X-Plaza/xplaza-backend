@@ -7,20 +7,17 @@ package com.xplaza.backend.service;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import com.xplaza.backend.jpa.dao.RevenueDao;
 import com.xplaza.backend.jpa.repository.DashboardRepository;
 
 @Service
+@RequiredArgsConstructor
 public class DashboardService {
   private final DashboardRepository dashboardRepo;
-
-  @Autowired
-  public DashboardService(DashboardRepository dashboardRepo) {
-    this.dashboardRepo = dashboardRepo;
-  }
 
   public RevenueDao getDashboardDetails(Long shop_id) {
     return dashboardRepo.findAllDetailsByShopId(shop_id);

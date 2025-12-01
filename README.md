@@ -2,7 +2,7 @@
 
 # X-Plaza Backend
 
-Spring Boot backend for X-Plaza e-commerce platform.
+Spring Boot backend for X-Plaza multi-vendor e-commerce platform.
 
 ## Prerequisites
 
@@ -24,10 +24,19 @@ Spring Boot backend for X-Plaza e-commerce platform.
 
 ## API
 
-- **V2 (current)**: `/api/v2/*` - Use this
-- **V1 (deprecated)**: `/api/v1/*` - Being phased out
+Base URL: `/api/v1/*`
 
-Swagger UI: http://localhost:8080/swagger-ui/index.html
+Swagger UI: <http://localhost:8080/swagger-ui/index.html>
+
+### Authentication
+
+All protected endpoints require a JWT token in the Authorization header:
+
+```text
+Authorization: Bearer <token>
+```
+
+Use `/api/v1/auth/login` to obtain tokens.
 
 ## Config
 

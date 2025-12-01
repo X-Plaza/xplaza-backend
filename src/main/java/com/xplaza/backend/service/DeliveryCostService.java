@@ -6,25 +6,21 @@ package com.xplaza.backend.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.DeliveryCost;
 import com.xplaza.backend.jpa.dao.DeliveryCostDao;
 import com.xplaza.backend.jpa.repository.DeliveryCostRepository;
 import com.xplaza.backend.mapper.DeliveryCostMapper;
-import com.xplaza.backend.service.entity.DeliveryCost;
 
 @Service
+@RequiredArgsConstructor
 public class DeliveryCostService {
   private final DeliveryCostRepository deliveryCostRepo;
   private final DeliveryCostMapper deliveryCostMapper;
-
-  @Autowired
-  public DeliveryCostService(DeliveryCostRepository deliveryCostRepo, DeliveryCostMapper deliveryCostMapper) {
-    this.deliveryCostRepo = deliveryCostRepo;
-    this.deliveryCostMapper = deliveryCostMapper;
-  }
 
   @Transactional
   public void addDeliveryCost(DeliveryCost entity) {

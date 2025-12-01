@@ -7,29 +7,24 @@ package com.xplaza.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.Country;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.CountryDao;
 import com.xplaza.backend.jpa.repository.CountryRepository;
 import com.xplaza.backend.mapper.CountryMapper;
 import com.xplaza.backend.mapper.StateMapper;
-import com.xplaza.backend.service.entity.Country;
 
 @Service
+@RequiredArgsConstructor
 public class CountryService {
   private final CountryRepository countryRepo;
   private final CountryMapper countryMapper;
   private final StateMapper stateMapper;
-
-  @Autowired
-  public CountryService(CountryRepository countryRepo, CountryMapper countryMapper, StateMapper stateMapper) {
-    this.countryRepo = countryRepo;
-    this.countryMapper = countryMapper;
-    this.stateMapper = stateMapper;
-  }
 
   @Transactional
   public Country addCountry(Country country) {

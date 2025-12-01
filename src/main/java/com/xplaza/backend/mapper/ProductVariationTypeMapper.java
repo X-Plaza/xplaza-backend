@@ -7,10 +7,10 @@ package com.xplaza.backend.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.xplaza.backend.domain.ProductVariationType;
 import com.xplaza.backend.http.dto.request.ProductVariationTypeRequest;
 import com.xplaza.backend.http.dto.response.ProductVariationTypeResponse;
 import com.xplaza.backend.jpa.dao.ProductVariationTypeDao;
-import com.xplaza.backend.service.entity.ProductVariationType;
 
 @Mapper(componentModel = "spring")
 public interface ProductVariationTypeMapper {

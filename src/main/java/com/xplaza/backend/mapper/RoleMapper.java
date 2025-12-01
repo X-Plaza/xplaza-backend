@@ -6,10 +6,10 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 
+import com.xplaza.backend.domain.Role;
 import com.xplaza.backend.http.dto.request.RoleRequest;
 import com.xplaza.backend.http.dto.response.RoleResponse;
 import com.xplaza.backend.jpa.dao.RoleDao;
-import com.xplaza.backend.service.entity.Role;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {

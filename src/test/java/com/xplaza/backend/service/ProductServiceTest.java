@@ -21,11 +21,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.xplaza.backend.domain.Product;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.ProductDao;
 import com.xplaza.backend.jpa.repository.ProductRepository;
 import com.xplaza.backend.mapper.ProductMapper;
-import com.xplaza.backend.service.entity.Product;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ProductService Unit Tests")

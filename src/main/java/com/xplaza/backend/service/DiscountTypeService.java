@@ -6,27 +6,23 @@ package com.xplaza.backend.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.domain.DiscountType;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.DiscountTypeDao;
 import com.xplaza.backend.jpa.repository.DiscountTypeRepository;
 import com.xplaza.backend.mapper.DiscountTypeMapper;
-import com.xplaza.backend.service.entity.DiscountType;
 
 @Service
+@RequiredArgsConstructor
 public class DiscountTypeService {
 
   private final DiscountTypeRepository discountTypeRepo;
   private final DiscountTypeMapper discountTypeMapper;
-
-  @Autowired
-  public DiscountTypeService(DiscountTypeRepository discountTypeRepo, DiscountTypeMapper discountTypeMapper) {
-    this.discountTypeRepo = discountTypeRepo;
-    this.discountTypeMapper = discountTypeMapper;
-  }
 
   @Transactional
   public DiscountType addDiscountType(DiscountType discountType) {

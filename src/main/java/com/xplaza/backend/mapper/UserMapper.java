@@ -6,8 +6,8 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 
+import com.xplaza.backend.domain.User;
 import com.xplaza.backend.jpa.dao.UserDao;
-import com.xplaza.backend.service.entity.User;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
