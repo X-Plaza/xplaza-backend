@@ -6,8 +6,6 @@ package com.xplaza.backend.http.controller;
 
 import static org.json.XMLTokener.entity;
 
-import java.util.Date;
-
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,16 +35,12 @@ public class DeliveryScheduleController extends BaseController {
     this.deliveryScheduleMapper = deliveryScheduleMapper;
   }
 
-  private Date start, end;
-  private Long responseTime;
-
   @GetMapping
   public ResponseEntity<ApiResponse> getDeliverySchedules() throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     var entities = deliveryScheduleService.listDeliverySchedules();
     var dtos = entities.stream().map(deliveryScheduleMapper::toResponse).toList();
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dtos);
     ApiResponse response = new ApiResponse(responseTime, "Delivery Schedule List", HttpStatus.OK.value(), "Success", "",
         data);
@@ -55,11 +49,10 @@ public class DeliveryScheduleController extends BaseController {
 
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse> getDeliverySchedule(@PathVariable @Valid Long id) throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     DeliverySchedule entity = deliveryScheduleService.listDeliverySchedule(id);
     DeliveryScheduleResponse dto = deliveryScheduleMapper.toResponse(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dto);
     ApiResponse response = new ApiResponse(responseTime, "Delivery Schedule By ID", HttpStatus.OK.value(), "Success",
         "", data);
@@ -69,11 +62,10 @@ public class DeliveryScheduleController extends BaseController {
   @PostMapping
   public ResponseEntity<ApiResponse> addSchedule(
       @RequestBody @Valid DeliveryScheduleRequest deliveryScheduleRequest) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     DeliverySchedule deliverySchedule = deliveryScheduleMapper.toEntity(deliveryScheduleRequest);
     deliveryScheduleService.addSchedule(deliverySchedule);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Add Delivery Schedule", HttpStatus.CREATED.value(),
         "Success", "Delivery Schedule has been created.", null), HttpStatus.CREATED);
   }
@@ -81,21 +73,19 @@ public class DeliveryScheduleController extends BaseController {
   @PutMapping
   public ResponseEntity<ApiResponse> updateSchedule(
       @RequestBody @Valid DeliveryScheduleRequest deliveryScheduleRequest) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     DeliverySchedule entity = deliveryScheduleMapper.toEntity(deliveryScheduleRequest);
     deliveryScheduleService.updateSchedule(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Update Delivery Schedule", HttpStatus.OK.value(),
         "Success", "Delivery Schedule has been updated.", null), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<ApiResponse> deleteSchedule(@PathVariable @Valid Long id) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     deliveryScheduleService.deleteSchedule(id);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Delete Delivery Schedule", HttpStatus.OK.value(),
         "Success", "Delivery Schedule has been deleted.", null), HttpStatus.OK);
   }

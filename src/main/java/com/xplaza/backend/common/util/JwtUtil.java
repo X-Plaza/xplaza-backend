@@ -33,6 +33,9 @@ public class JwtUtil {
   @Value("${jwt.expiration}")
   private long TOKEN_EXPIRATION_MS;
 
+  @Value("${jwt.refresh-expiration:604800000}") // Default: 7 days in milliseconds
+  private long REFRESH_TOKEN_EXPIRATION_MS;
+
   private SecretKey SECRET_KEY;
 
   @PostConstruct
@@ -121,7 +124,7 @@ public class JwtUtil {
         .claims(claims)
         .subject(subject)
         .issuedAt(new Date(System.currentTimeMillis()))
-        .expiration(new Date(Long.MAX_VALUE))
+        .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION_MS))
         .signWith(SECRET_KEY)
         .compact();
   }

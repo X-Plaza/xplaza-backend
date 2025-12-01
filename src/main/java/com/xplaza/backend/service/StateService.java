@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.StateDao;
 import com.xplaza.backend.jpa.repository.StateRepository;
 import com.xplaza.backend.mapper.StateMapper;
@@ -34,7 +35,7 @@ public class StateService {
   @Transactional
   public State updateState(State state) {
     StateDao existingStateDao = stateRepo.findById(state.getStateId())
-        .orElseThrow(() -> new RuntimeException("State not found with id: " + state.getStateId()));
+        .orElseThrow(() -> new ResourceNotFoundException("State not found with id: " + state.getStateId()));
     // Update the existing state with new values
     existingStateDao.setStateName(state.getStateName());
     StateDao updatedStateDao = stateRepo.save(existingStateDao);
@@ -55,7 +56,7 @@ public class StateService {
 
   public State listState(Long id) {
     StateDao stateDao = stateRepo.findById(id)
-        .orElseThrow(() -> new RuntimeException("State not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("State not found with id: " + id));
     return stateMapper.toEntityFromDao(stateDao);
   }
 

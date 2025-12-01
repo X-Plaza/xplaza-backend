@@ -4,8 +4,6 @@
  */
 package com.xplaza.backend.http.controller;
 
-import java.util.Date;
-
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +28,12 @@ public class PlatformInfoController extends BaseController {
     this.platformInfoService = platformInfoService;
   }
 
-  private Date start, end;
-  private Long responseTime;
-
   @GetMapping
   public ResponseEntity<ApiResponse> getPlatformInfo() throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     PlatformInfo platformInfo = platformInfoService.listPlatform();
     PlatformInfoResponse dto = new PlatformInfoResponse();
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dto);
     ApiResponse response = new ApiResponse(responseTime, "Platform Info", HttpStatus.OK.value(), "Success", "", data);
     return ResponseEntity.ok(response);
@@ -47,20 +41,18 @@ public class PlatformInfoController extends BaseController {
 
   @PostMapping
   public ResponseEntity<ApiResponse> addPlatformInfo(@RequestBody @Valid PlatformInfo platformInfo) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     platformInfoService.addPlatformInfo(platformInfo);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Update Platform Info", HttpStatus.OK.value(),
         "Success", "Platform Info has been updated.", null), HttpStatus.OK);
   }
 
   @PutMapping
   public ResponseEntity<ApiResponse> updatePlatformInfo(@RequestBody @Valid PlatformInfo platformInfo) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     platformInfoService.updatePlatformInfo(platformInfo);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Update Platform Info", HttpStatus.OK.value(),
         "Success", "Platform Info has been updated.", null), HttpStatus.OK);
   }

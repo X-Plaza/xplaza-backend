@@ -5,7 +5,6 @@
 package com.xplaza.backend.http.controller;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -40,18 +39,14 @@ public class ProductController extends BaseController {
     this.productMapper = productMapper;
   }
 
-  private Date start, end;
-  private Long responseTime;
-
   @GetMapping
   public ResponseEntity<ApiResponse> getProducts(@RequestParam(value = "user_id") @Valid Long user_id)
       throws JsonProcessingException, ParseException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     List<Product> entities = productService.listProducts();
     List<ProductResponse> dtos = entities == null ? null
         : entities.stream().map(productMapper::toResponse).toList();
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dtos);
     ApiResponse response = new ApiResponse(responseTime, "Product List", HttpStatus.OK.value(), "Success", "", data);
     return ResponseEntity.ok(response);
@@ -60,11 +55,10 @@ public class ProductController extends BaseController {
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse> getProduct(@PathVariable @Valid Long id)
       throws JsonProcessingException, ParseException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Product entity = productService.listProduct(id);
     ProductResponse dto = productMapper.toResponse(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dto);
     ApiResponse response = new ApiResponse(responseTime, "Product By ID", HttpStatus.OK.value(), "Success", "", data);
     return ResponseEntity.ok(response);
@@ -82,11 +76,10 @@ public class ProductController extends BaseController {
   @GetMapping("/by-shop")
   public ResponseEntity<ApiResponse> getProductsByShop(@RequestParam(value = "shop_id") @Valid Long shop_id)
       throws JsonProcessingException, ParseException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     List<Product> entities = productService.listProductsByShop(shop_id);
     List<ProductResponse> dtos = entities.stream().map(productMapper::toResponse).toList();
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dtos);
     ApiResponse response = new ApiResponse(responseTime, "Product List By Shop", HttpStatus.OK.value(), "Success", "",
         data);
@@ -107,11 +100,10 @@ public class ProductController extends BaseController {
       @RequestParam(value = "shop_id") @Valid Long shop_id,
       @RequestParam(value = "category_id") @Valid Long category_id)
       throws JsonProcessingException, ParseException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     List<Product> entities = productService.listProductsByCategory(category_id);
     List<ProductResponse> dtos = entities.stream().map(productMapper::toResponse).toList();
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dtos);
     ApiResponse response = new ApiResponse(responseTime, "Product List By Category", HttpStatus.OK.value(), "Success",
         "", data);
@@ -123,11 +115,10 @@ public class ProductController extends BaseController {
       @RequestParam(value = "shop_id") @Valid Long shop_id,
       @RequestParam(value = "product_name") @Valid String product_name)
       throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     List<Product> entities = List.of();
     List<ProductResponse> dtos = entities.stream().map(productMapper::toResponse).toList();
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dtos);
     ApiResponse response = new ApiResponse(responseTime, "Product List By Name", HttpStatus.OK.value(), "Success", "",
         data);
@@ -137,22 +128,20 @@ public class ProductController extends BaseController {
   @PostMapping
   public ResponseEntity<ApiResponse> addProduct(@RequestBody @Valid ProductRequest productRequest)
       throws JSONException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Product entity = productMapper.toEntity(productRequest);
     productService.addProduct(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Add Product", HttpStatus.CREATED.value(),
         "Success", "Product has been created.", null), HttpStatus.CREATED);
   }
 
   @PutMapping
   public ResponseEntity<ApiResponse> updateProduct(@RequestBody @Valid ProductRequest productRequest) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Product entity = productMapper.toEntity(productRequest);
     productService.updateProduct(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Update Product", HttpStatus.OK.value(),
         "Success", "Product has been updated.", null), HttpStatus.OK);
   }
@@ -160,10 +149,9 @@ public class ProductController extends BaseController {
   @DeleteMapping("/{id}")
   public ResponseEntity<ApiResponse> deleteProduct(@PathVariable @Valid Long id) {
     String product_name = productService.getProductNameByID(id);
-    start = new Date();
+    long start = System.currentTimeMillis();
     productService.deleteProduct(id);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Delete Product", HttpStatus.OK.value(),
         "Success", product_name + " has been deleted.", null), HttpStatus.OK);
   }

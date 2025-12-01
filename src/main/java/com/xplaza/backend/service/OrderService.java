@@ -11,6 +11,9 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -223,6 +226,9 @@ public class OrderService {
 
   @Transactional
   public void deleteOrder(Long id) {
+    if (!orderRepo.existsById(id)) {
+      throw new ResourceNotFoundException("Order not found with id: " + id);
+    }
     orderRepo.deleteById(id);
   }
 
@@ -331,6 +337,58 @@ public class OrderService {
   public Order getOrderById(Long id) {
     return orderRepo.findById(id)
         .map(orderMapper::toEntityFromDao)
-        .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
+  }
+
+  // ===== V2 Paginated Methods =====
+  // Note: These use in-memory pagination for now since the existing queries are
+  // complex native SQL.
+  // For production, consider rewriting with Spring Data JPA Specifications for
+  // true DB-level pagination.
+
+  public Page<OrderList> getAllOrdersPaginated(Pageable pageable) {
+    List<OrderList> allOrders = getAllOrders();
+    return paginateList(allOrders, pageable);
+  }
+
+  public Page<OrderList> getOrdersByStatusPaginated(String status, Pageable pageable) {
+    List<OrderList> orders = getOrdersByStatus(status);
+    return paginateList(orders, pageable);
+  }
+
+  public Page<OrderList> getOrdersByFilterPaginated(String status, Date orderDate, Pageable pageable) {
+    List<OrderList> orders = getOrdersByFilter(status, orderDate);
+    return paginateList(orders, pageable);
+  }
+
+  public Page<OrderList> getOrdersByAdminUserPaginated(Long userId, Pageable pageable) {
+    List<OrderList> orders = getOrdersByAdminUser(userId);
+    return paginateList(orders, pageable);
+  }
+
+  public Page<OrderList> getOrdersByStatusAndAdminUserPaginated(String status, Long userId, Pageable pageable) {
+    List<OrderList> orders = getOrdersByStatusAndAdminUser(status, userId);
+    return paginateList(orders, pageable);
+  }
+
+  public Page<OrderList> getOrdersByFilterAndAdminUserPaginated(String status, Date orderDate, Long userId,
+      Pageable pageable) {
+    List<OrderList> orders = getOrdersByFilterAndAdminUser(status, orderDate, userId);
+    return paginateList(orders, pageable);
+  }
+
+  /**
+   * Helper method to paginate a list in memory.
+   */
+  private <T> Page<T> paginateList(List<T> list, Pageable pageable) {
+    int start = (int) pageable.getOffset();
+    int end = Math.min(start + pageable.getPageSize(), list.size());
+
+    if (start >= list.size()) {
+      return new PageImpl<>(List.of(), pageable, list.size());
+    }
+
+    List<T> subList = list.subList(start, end);
+    return new PageImpl<>(subList, pageable, list.size());
   }
 }

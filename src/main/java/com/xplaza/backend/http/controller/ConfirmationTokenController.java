@@ -4,8 +4,6 @@
  */
 package com.xplaza.backend.http.controller;
 
-import java.util.Date;
-
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,25 +23,20 @@ public class ConfirmationTokenController {
   @Autowired
   private ConfirmationTokenService confirmationTokenService;
 
-  private Date start, end;
-  private Long responseTime;
-
   @PostMapping
   public ResponseEntity<ApiResponse> sendConfirmationTokenToAdmin(@RequestParam("username") @Valid String username) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     confirmationTokenService.sendConfirmationToken(username.toLowerCase());
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Send Confirmation Code", HttpStatus.CREATED.value(),
         "Success", "A confirmation code has been sent to the email.", null), HttpStatus.CREATED);
   }
 
   @PostMapping("/to-customer")
   public ResponseEntity<ApiResponse> sendConfirmationTokenToCustomer(@RequestParam("username") @Valid String username) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     confirmationTokenService.sendConfirmationTokenToCustomer(username.toLowerCase());
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Send Confirmation Code", HttpStatus.CREATED.value(),
         "Success", "A confirmation code has been sent to the email.", null), HttpStatus.CREATED);
   }

@@ -67,6 +67,9 @@ public class AdminUserService {
 
   @Transactional
   public void deleteAdminUser(Long id) {
+    if (!adminUserRepository.existsById(id)) {
+      throw new ResourceNotFoundException("Admin user not found with id: " + id);
+    }
     adminUserRepository.deleteById(id);
   }
 

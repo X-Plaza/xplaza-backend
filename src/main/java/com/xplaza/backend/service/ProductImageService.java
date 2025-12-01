@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.ProductImageDao;
 import com.xplaza.backend.jpa.repository.ProductImageRepository;
 import com.xplaza.backend.mapper.ProductImageMapper;
@@ -37,7 +38,7 @@ public class ProductImageService {
   @Transactional
   public ProductImage updateProductImage(Long id, ProductImage productImage) {
     ProductImageDao existingProductImageDao = productImageRepo.findById(id)
-        .orElseThrow(() -> new RuntimeException("Product image not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Product image not found with id: " + id));
 
     ProductImageDao productImageDao = productImageMapper.toDao(productImage);
     productImageDao.setProductImagesId(existingProductImageDao.getProductImagesId());
@@ -62,7 +63,7 @@ public class ProductImageService {
 
   public ProductImage listProductImage(Long id) {
     ProductImageDao productImageDao = productImageRepo.findById(id)
-        .orElseThrow(() -> new RuntimeException("Product image not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Product image not found with id: " + id));
     return productImageMapper.toEntityFromDao(productImageDao);
   }
 

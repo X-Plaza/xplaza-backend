@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.CurrencyDao;
 import com.xplaza.backend.jpa.repository.CurrencyRepository;
 import com.xplaza.backend.mapper.CurrencyMapper;
@@ -37,7 +38,7 @@ public class CurrencyService {
   @Transactional
   public Currency updateCurrency(Long id, Currency currency) {
     CurrencyDao existingCurrencyDao = currencyRepo.findById(id)
-        .orElseThrow(() -> new RuntimeException("Currency not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Currency not found with id: " + id));
 
     CurrencyDao currencyDao = currencyMapper.toDao(currency);
     currencyDao.setCurrencyId(existingCurrencyDao.getCurrencyId());
@@ -60,7 +61,7 @@ public class CurrencyService {
 
   public Currency listCurrency(Long id) {
     CurrencyDao currencyDao = currencyRepo.findById(id)
-        .orElseThrow(() -> new RuntimeException("Currency not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Currency not found with id: " + id));
     return currencyMapper.toEntityFromDao(currencyDao);
   }
 }

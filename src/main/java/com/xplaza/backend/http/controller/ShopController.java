@@ -4,7 +4,6 @@
  */
 package com.xplaza.backend.http.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -36,9 +35,6 @@ public class ShopController extends BaseController {
     this.roleService = roleService;
     this.shopMapper = shopMapper;
   }
-
-  private Date start, end;
-  private Long responseTime;
 
   @GetMapping
   public ResponseEntity<ApiResponse> getShops() throws Exception {

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +63,9 @@ public class ShopService {
   @Transactional
   public void deleteShop(Long id) {
     ValidationUtil.validateId(id, "Shop ID");
+    if (!shopRepo.existsById(id)) {
+      throw new ResourceNotFoundException("Shop not found with id: " + id);
+    }
     shopRepo.deleteById(id);
   }
 
@@ -89,5 +94,27 @@ public class ShopService {
     return shopDaos.stream()
         .map(shopMapper::toEntityFromDao)
         .collect(Collectors.toList());
+  }
+
+  // ===== V2 Paginated Methods =====
+
+  public Page<Shop> listShopsPaginated(Pageable pageable) {
+    return shopRepo.findAll(pageable)
+        .map(shopMapper::toEntityFromDao);
+  }
+
+  public Page<Shop> searchShops(String searchTerm, Pageable pageable) {
+    return shopRepo.findByShopNameContainingIgnoreCase(searchTerm, pageable)
+        .map(shopMapper::toEntityFromDao);
+  }
+
+  public Page<Shop> listShopsByLocationPaginated(Long locationId, Pageable pageable) {
+    return shopRepo.findByLocationLocationId(locationId, pageable)
+        .map(shopMapper::toEntityFromDao);
+  }
+
+  public Page<Shop> listShopsByOwnerPaginated(Long ownerId, Pageable pageable) {
+    return shopRepo.findByShopOwnerIdPaginated(ownerId, pageable)
+        .map(shopMapper::toEntityFromDao);
   }
 }

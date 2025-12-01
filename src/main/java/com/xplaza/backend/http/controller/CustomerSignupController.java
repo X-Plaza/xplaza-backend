@@ -41,37 +41,30 @@ public class CustomerSignupController extends BaseController {
   @Autowired
   private ConfirmationTokenService confirmationTokenService;
 
-  private Date start, end;
-  private Long responseTime;
-
   @PostMapping
   public ResponseEntity<ApiResponse> signupCustomer(@RequestBody @Valid Customer customer) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     ConfirmationToken token = confirmationTokenService.getConfirmationToken(customer.getOtp());
     if (token == null) {
-      end = new Date();
-      responseTime = end.getTime() - start.getTime();
+      long responseTime = System.currentTimeMillis() - start;
       return new ResponseEntity<>(new ApiResponse(responseTime, "Signup Customer", HttpStatus.FORBIDDEN.value(),
           "Failed", "Confirmation code does not match!", null), HttpStatus.FORBIDDEN);
     }
     if (!token.getEmail().equals(customer.getEmail().toLowerCase())) {
-      end = new Date();
-      responseTime = end.getTime() - start.getTime();
+      long responseTime = System.currentTimeMillis() - start;
       return new ResponseEntity<>(new ApiResponse(responseTime, "Signup Customer", HttpStatus.FORBIDDEN.value(),
           "Failed", "Confirmation code does not match!", null), HttpStatus.FORBIDDEN);
     }
     Date today = new Date();
     if (today.after(token.getValidTill())) {
-      end = new Date();
-      responseTime = end.getTime() - start.getTime();
+      long responseTime = System.currentTimeMillis() - start;
       return new ResponseEntity<>(new ApiResponse(responseTime, "Signup Customer", HttpStatus.FORBIDDEN.value(),
           "Failed", "Confirmation code expired! Please get a new code!", null), HttpStatus.FORBIDDEN);
     }
     Customer customerLogin = customerLoginService
         .getCustomerLoginDetails(customer.getEmail().toLowerCase());
     if (customerLogin != null) {
-      end = new Date();
-      responseTime = end.getTime() - start.getTime();
+      long responseTime = System.currentTimeMillis() - start;
       return new ResponseEntity<>(new ApiResponse(responseTime, "Signup Customer", HttpStatus.FORBIDDEN.value(),
           "Failed", "User Already Exist!", null), HttpStatus.FORBIDDEN);
     }
@@ -91,15 +84,14 @@ public class CustomerSignupController extends BaseController {
     customer.setEmail(customer.getEmail().toLowerCase());
     customerSignupService.signupCustomer(customer);
     customerSignupService.sendLoginDetails(customer.getEmail(), temp_password);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Signup Customer", HttpStatus.CREATED.value(), "Success",
         "Customer account has been created successfully.", null), HttpStatus.CREATED);
   }
 
   @PostMapping("/send-otp")
   public ResponseEntity<ApiResponse> sendOTP(@RequestParam("cell_no") @Valid String cell_no) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     String customerId = "D22F37FA-1914-48E3-B018-ACFF0E611C3C";
     String apiKey = "1UKbxwwvd0J7q5ne4vtTAlnE4DVqoVqQ+yvKKyHEISDXUu35Jzv7UIeXTlFcR4IYlIp/+uj2EpvXLbksmu/xkA==";
     String verifyCode = Util.randomWithNDigits(5);
@@ -111,8 +103,7 @@ public class CustomerSignupController extends BaseController {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Send OTP", HttpStatus.CREATED.value(), "Success",
         "An OTP has been sent to your phone.", null), HttpStatus.CREATED);
   }

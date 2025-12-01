@@ -4,7 +4,6 @@
  */
 package com.xplaza.backend.http.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -29,9 +28,6 @@ public class DeliveryCostController extends BaseController {
   @Autowired
   private DeliveryCostMapper deliveryCostMapper;
 
-  private Date start, end;
-  private Long responseTime;
-
   @GetMapping
   public ResponseEntity<List<DeliveryCostResponse>> getDeliveryCosts() {
     List<DeliveryCost> entities = deliveryCostService.listDeliveryCosts();
@@ -49,11 +45,10 @@ public class DeliveryCostController extends BaseController {
   @PostMapping
   public ResponseEntity<ApiResponse> addDeliveryCost(
       @RequestBody @Valid DeliveryCostRequest deliveryCostRequest) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     DeliveryCost entity = deliveryCostMapper.toEntity(deliveryCostRequest);
     deliveryCostService.addDeliveryCost(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Add Delivery Cost", HttpStatus.CREATED.value(),
         "Success", "Delivery Cost has been created.", null), HttpStatus.CREATED);
   }
@@ -61,11 +56,10 @@ public class DeliveryCostController extends BaseController {
   @PutMapping
   public ResponseEntity<ApiResponse> updateDeliveryCost(
       @RequestBody @Valid DeliveryCostRequest deliveryCostRequest) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     DeliveryCost entity = deliveryCostMapper.toEntity(deliveryCostRequest);
     deliveryCostService.updateDeliveryCost(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Update Delivery Cost", HttpStatus.OK.value(),
         "Success", "Delivery Cost has been updated.", null), HttpStatus.OK);
   }
@@ -73,10 +67,9 @@ public class DeliveryCostController extends BaseController {
   @DeleteMapping("/{id}")
   public ResponseEntity<ApiResponse> deleteDeliveryCost(@PathVariable @Valid Long id) {
     String delivery_slab = deliveryCostService.getDeliverySlabRangeNameByID(id);
-    start = new Date();
+    long start = System.currentTimeMillis();
     deliveryCostService.deleteDeliveryCost(id);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Delete Delivery Cost", HttpStatus.OK.value(),
         "Success", "Delivery cost of " + delivery_slab + " order range has been deleted.", null), HttpStatus.OK);
   }

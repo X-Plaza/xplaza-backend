@@ -4,7 +4,6 @@
  */
 package com.xplaza.backend.http.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -35,16 +34,12 @@ public class CurrencyController extends BaseController {
     this.currencyMapper = currencyMapper;
   }
 
-  private Date start, end;
-  private Long responseTime;
-
   @GetMapping
   public ResponseEntity<ApiResponse> getCurrencies() throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     List<Currency> entities = currencyService.listCurrencies();
     List<CurrencyResponse> dtos = entities.stream().map(currencyMapper::toResponse).toList();
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dtos);
     ApiResponse response = new ApiResponse(responseTime, "Currency List", HttpStatus.OK.value(), "Success", "", data);
     return ResponseEntity.ok(response);
@@ -52,11 +47,10 @@ public class CurrencyController extends BaseController {
 
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse> getCurrency(@PathVariable @Valid Long id) throws JsonProcessingException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Currency entity = currencyService.listCurrency(id);
     CurrencyResponse dto = currencyMapper.toResponse(entity);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     String data = new ObjectMapper().writeValueAsString(dto);
     ApiResponse response = new ApiResponse(responseTime, "Currency By ID", HttpStatus.OK.value(), "Success", "", data);
     return ResponseEntity.ok(response);
@@ -64,11 +58,10 @@ public class CurrencyController extends BaseController {
 
   @PostMapping
   public ResponseEntity<ApiResponse> addCurrency(@RequestBody @Valid CurrencyRequest currencyRequest) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Currency currency = currencyMapper.toEntity(currencyRequest);
     currencyService.addCurrency(currency);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Add Currency", HttpStatus.CREATED.value(),
         "Success", "Currency has been created.", null), HttpStatus.CREATED);
   }
@@ -76,21 +69,19 @@ public class CurrencyController extends BaseController {
   @PutMapping("/{id}")
   public ResponseEntity<ApiResponse> updateCurrency(@PathVariable Long id,
       @RequestBody @Valid CurrencyRequest currencyRequest) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Currency currency = currencyMapper.toEntity(currencyRequest);
     currencyService.updateCurrency(id, currency);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Update Currency", HttpStatus.OK.value(),
         "Success", "Currency has been updated.", null), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<ApiResponse> deleteCurrency(@PathVariable @Valid Long id) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     currencyService.deleteCurrency(id);
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Delete Currency", HttpStatus.OK.value(),
         "Success", "Currency has been deleted.", null), HttpStatus.OK);
   }

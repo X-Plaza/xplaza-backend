@@ -23,6 +23,9 @@ spring:
 server:
   port: 8080
 
+# NOTE: For production, use a secure random secret of at least 256 bits (32+ characters)
+# Generate with: openssl rand -base64 32
 jwt:
-  secret: abcdefghijklmnopqrstuvwxyz1234567890
+  secret: xplaza-local-dev-secret-key-change-in-production-2024
   expiration: 300000
+  refresh-expiration: 604800000  # 7 days in milliseconds

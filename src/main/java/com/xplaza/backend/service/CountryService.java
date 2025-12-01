@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.CountryDao;
 import com.xplaza.backend.jpa.repository.CountryRepository;
 import com.xplaza.backend.mapper.CountryMapper;
@@ -40,7 +41,7 @@ public class CountryService {
   @Transactional
   public Country updateCountry(Country country) {
     CountryDao existingCountryDao = countryRepo.findById(country.getCountryId())
-        .orElseThrow(() -> new RuntimeException("Country not found with id: " + country.getCountryId()));
+        .orElseThrow(() -> new ResourceNotFoundException("Country not found with id: " + country.getCountryId()));
     existingCountryDao.setCountryName(country.getCountryName());
     existingCountryDao.setIso(country.getIso());
     existingCountryDao.setIso3(country.getIso3());
@@ -66,7 +67,7 @@ public class CountryService {
 
   public Country listCountry(Long id) {
     CountryDao countryDao = countryRepo.findById(id)
-        .orElseThrow(() -> new RuntimeException("Country not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Country not found with id: " + id));
     return countryMapper.toEntityFromDao(countryDao);
   }
 }

@@ -6,7 +6,6 @@ package com.xplaza.backend.http.controller;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,13 +42,10 @@ public class CustomerLoginController extends BaseController {
     this.securityService = securityService;
   }
 
-  private Date start, end;
-  private Long responseTime;
-
   @PostMapping
   public ResponseEntity<String> loginCustomerUser(@RequestParam("username") @Valid String username,
       @RequestParam("password") @Valid String password) throws IOException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     boolean isValidUser = customerLoginService.isValidCustomerUser(username.toLowerCase(), password);
     Customer dtos = new Customer();
     if (isValidUser) {
@@ -58,8 +54,7 @@ public class CustomerLoginController extends BaseController {
     } else {
       dtos.setAuthentication(false);
     }
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
 
     ObjectMapper mapper = new ObjectMapper();
     String response = "{\n" +
@@ -75,17 +70,15 @@ public class CustomerLoginController extends BaseController {
 
   @PostMapping("/send-otp")
   public ResponseEntity<ApiResponse> sendOTP(@RequestParam("username") @Valid String username) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     Customer customer = customerLoginService.getCustomerLoginDetails(username.toLowerCase());
     if (customer == null) {
-      end = new Date();
-      responseTime = end.getTime() - start.getTime();
+      long responseTime = System.currentTimeMillis() - start;
       return new ResponseEntity<>(new ApiResponse(responseTime, "Send OTP", HttpStatus.FORBIDDEN.value(),
           "Failed", "User Does Not Exist!", null), HttpStatus.FORBIDDEN);
     }
     confirmationTokenService.sendOTPToCustomer(username.toLowerCase());
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Send OTP", HttpStatus.CREATED.value(),
         "Success", "An OTP has been sent to your email.", null), HttpStatus.CREATED);
   }
@@ -93,22 +86,19 @@ public class CustomerLoginController extends BaseController {
   @PostMapping("/validate-otp")
   public ResponseEntity<ApiResponse> validateOTP(@RequestParam("username") @Valid String username,
       @RequestParam("OTP") @Valid String OTP) {
-    start = new Date();
+    long start = System.currentTimeMillis();
     ConfirmationToken token = confirmationTokenService.getConfirmationToken(OTP);
     if (token == null) {
-      end = new Date();
-      responseTime = end.getTime() - start.getTime();
+      long responseTime = System.currentTimeMillis() - start;
       return new ResponseEntity<>(new ApiResponse(responseTime, "Validate OTP", HttpStatus.FORBIDDEN.value(),
           "Failed", "OTP does not match!", null), HttpStatus.FORBIDDEN);
     }
     if (!token.getEmail().equals(username.toLowerCase())) {
-      end = new Date();
-      responseTime = end.getTime() - start.getTime();
+      long responseTime = System.currentTimeMillis() - start;
       return new ResponseEntity<>(new ApiResponse(responseTime, "Validate OTP", HttpStatus.FORBIDDEN.value(),
           "Failed", "OTP does not match!", null), HttpStatus.FORBIDDEN);
     }
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Validate OTP", HttpStatus.OK.value(),
         "Success", "OTP matched!", null), HttpStatus.OK);
   }
@@ -117,7 +107,7 @@ public class CustomerLoginController extends BaseController {
   public ResponseEntity<ApiResponse> changeUserPassword(@RequestParam("username") @Valid String username,
       @RequestParam("newPassword") @Valid String newPassword)
       throws IOException {
-    start = new Date();
+    long start = System.currentTimeMillis();
     byte[] byteSalt = null;
     try {
       byteSalt = securityService.getSalt();
@@ -128,8 +118,7 @@ public class CustomerLoginController extends BaseController {
     String strDigestPsw = securityService.toHex(biteDigestPsw);
     String strSalt = securityService.toHex(byteSalt);
     customerUserService.changeCustomerPassword(strDigestPsw, strSalt, username.toLowerCase());
-    end = new Date();
-    responseTime = end.getTime() - start.getTime();
+    long responseTime = System.currentTimeMillis() - start;
     return new ResponseEntity<>(new ApiResponse(responseTime, "Change Customer User Password",
         HttpStatus.OK.value(), "Success", "Password has been updated successfully.", null), HttpStatus.OK);
   }

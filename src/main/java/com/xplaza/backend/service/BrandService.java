@@ -8,9 +8,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.BrandDao;
 import com.xplaza.backend.jpa.repository.BrandRepository;
 import com.xplaza.backend.mapper.BrandMapper;
@@ -37,7 +40,7 @@ public class BrandService {
   @Transactional
   public Brand updateBrand(Brand brand) {
     BrandDao existingBrandDao = brandRepo.findById(brand.getBrandId())
-        .orElseThrow(() -> new RuntimeException("Brand not found with id: " + brand.getBrandId()));
+        .orElseThrow(() -> new ResourceNotFoundException("Brand not found with id: " + brand.getBrandId()));
 
     // Update fields from the provided brand entity
     existingBrandDao.setBrandName(brand.getBrandName());
@@ -48,6 +51,9 @@ public class BrandService {
 
   @Transactional
   public void deleteBrand(Long id) {
+    if (!brandRepo.existsById(id)) {
+      throw new ResourceNotFoundException("Brand not found with id: " + id);
+    }
     brandRepo.deleteById(id);
   }
 
@@ -60,7 +66,7 @@ public class BrandService {
 
   public Brand listBrand(Long id) {
     BrandDao brandDao = brandRepo.findById(id)
-        .orElseThrow(() -> new RuntimeException("Brand not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Brand not found with id: " + id));
     return brandMapper.toEntityFromDao(brandDao);
   }
 
@@ -71,5 +77,17 @@ public class BrandService {
   public boolean isExist(Brand entity) {
     BrandDao brand = brandMapper.toDao(entity);
     return brandRepo.existsByName(brand.getBrandName());
+  }
+
+  // ===== V2 Paginated Methods =====
+
+  public Page<Brand> listBrandsPaginated(Pageable pageable) {
+    return brandRepo.findAll(pageable)
+        .map(brandMapper::toEntityFromDao);
+  }
+
+  public Page<Brand> searchBrands(String searchTerm, Pageable pageable) {
+    return brandRepo.findByBrandNameContainingIgnoreCase(searchTerm, pageable)
+        .map(brandMapper::toEntityFromDao);
   }
 }

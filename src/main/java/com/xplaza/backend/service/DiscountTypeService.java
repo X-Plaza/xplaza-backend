@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.exception.ResourceNotFoundException;
 import com.xplaza.backend.jpa.dao.DiscountTypeDao;
 import com.xplaza.backend.jpa.repository.DiscountTypeRepository;
 import com.xplaza.backend.mapper.DiscountTypeMapper;
@@ -37,7 +38,7 @@ public class DiscountTypeService {
   @Transactional
   public DiscountType updateDiscountType(Long id, DiscountType discountType) {
     DiscountTypeDao existingDiscountTypeDao = discountTypeRepo.findById(id)
-        .orElseThrow(() -> new RuntimeException("Discount type not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Discount type not found with id: " + id));
 
     DiscountTypeDao discountTypeDao = discountTypeMapper.toDao(discountType);
     discountTypeDao.setDiscountTypeId(existingDiscountTypeDao.getDiscountTypeId());
@@ -60,7 +61,7 @@ public class DiscountTypeService {
 
   public DiscountType listDiscountType(Long id) {
     DiscountTypeDao discountTypeDao = discountTypeRepo.findById(id)
-        .orElseThrow(() -> new RuntimeException("Discount type not found with id: " + id));
+        .orElseThrow(() -> new ResourceNotFoundException("Discount type not found with id: " + id));
     return discountTypeMapper.toEntityFromDao(discountTypeDao);
   }
 }
