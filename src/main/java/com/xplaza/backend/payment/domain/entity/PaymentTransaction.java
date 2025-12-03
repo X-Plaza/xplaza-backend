@@ -12,9 +12,6 @@ import jakarta.persistence.*;
 
 import lombok.*;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
 /**
  * Payment Transaction records all payment attempts and their outcomes.
  * 
@@ -127,9 +124,8 @@ public class PaymentTransaction {
   @Column(name = "risk_level", length = 20)
   private RiskLevel riskLevel;
 
-  @JdbcTypeCode(SqlTypes.ARRAY)
-  @Column(name = "risk_factors", columnDefinition = "TEXT[]")
-  private String[] riskFactors;
+  @Column(name = "risk_factors", columnDefinition = "TEXT")
+  private String riskFactors;
 
   // Metadata
   @Column(name = "ip_address", length = 45)
@@ -141,8 +137,7 @@ public class PaymentTransaction {
   @Column(name = "device_fingerprint", length = 255)
   private String deviceFingerprint;
 
-  @JdbcTypeCode(SqlTypes.JSON)
-  @Column(name = "metadata", columnDefinition = "jsonb")
+  @Column(name = "metadata", columnDefinition = "TEXT")
   private String metadata;
 
   /**

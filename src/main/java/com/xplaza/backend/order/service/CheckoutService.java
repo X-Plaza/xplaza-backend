@@ -17,10 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.xplaza.backend.order.domain.entity.Cart;
+import com.xplaza.backend.cart.domain.entity.Cart;
+import com.xplaza.backend.cart.domain.repository.CartRepository;
 import com.xplaza.backend.order.domain.entity.CheckoutSession;
 import com.xplaza.backend.order.domain.entity.CustomerOrder;
-import com.xplaza.backend.order.domain.repository.CartRepository;
 import com.xplaza.backend.order.domain.repository.CheckoutSessionRepository;
 
 /**
@@ -62,8 +62,8 @@ public class CheckoutService {
         .cartId(cartId)
         .customerId(customerId)
         .subtotal(cart.getSubtotal())
-        .discountAmount(cart.getDiscountTotal())
-        .currency(cart.getCurrency())
+        .discountAmount(cart.getCouponDiscount())
+        .currency(cart.getCurrencyCode())
         .build();
 
     checkout.setDefaultExpiration();

@@ -21,8 +21,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.xplaza.backend.order.domain.entity.*;
-import com.xplaza.backend.order.domain.repository.CartRepository;
+import com.xplaza.backend.cart.domain.entity.Cart;
+import com.xplaza.backend.cart.domain.entity.CartItem;
+import com.xplaza.backend.cart.domain.repository.CartRepository;
+import com.xplaza.backend.order.domain.entity.CheckoutSession;
+import com.xplaza.backend.order.domain.entity.CustomerOrder;
+import com.xplaza.backend.order.domain.entity.CustomerOrderItem;
 import com.xplaza.backend.order.domain.repository.CustomerOrderItemRepository;
 import com.xplaza.backend.order.domain.repository.CustomerOrderRepository;
 
@@ -94,13 +98,14 @@ public class CustomerOrderService {
       CustomerOrderItem orderItem = CustomerOrderItem.builder()
           .order(order)
           .productId(cartItem.getProductId())
-          .variantId(cartItem.getVariantId())
+          .variantId(cartItem.getVariantId() != null ? UUID.fromString(cartItem.getVariantId().toString()) : null)
           .shopId(cartItem.getShopId())
-          .productName("Product " + cartItem.getProductId()) // Should be fetched from product service
+          .productName(cartItem.getProductName() != null ? cartItem.getProductName()
+              : "Product " + cartItem.getProductId())
           .quantity(cartItem.getQuantity())
           .unitPrice(cartItem.getUnitPrice())
           .discountAmount(cartItem.getDiscountAmount())
-          .totalPrice(cartItem.getTotalPrice())
+          .totalPrice(cartItem.getLineTotal())
           .build();
       order.addItem(orderItem);
     }
@@ -111,10 +116,10 @@ public class CustomerOrderService {
     CustomerOrder savedOrder = orderRepository.save(order);
 
     // Mark cart as converted
-    cart.markAsConverted(savedOrder.getOrderId());
+    cart.markConverted();
     cartRepository.save(cart);
 
-    log.info("Created order {} from cart {}", savedOrder.getOrderNumber(), cart.getCartId());
+    log.info("Created order {} from cart {}", savedOrder.getOrderNumber(), cart.getId());
 
     return savedOrder;
   }
