@@ -6,13 +6,14 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.Category;
 import com.xplaza.backend.http.dto.request.CategoryRequest;
 import com.xplaza.backend.http.dto.response.CategoryResponse;
 import com.xplaza.backend.jpa.dao.CategoryDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CategoryMapper {
   @Mapping(target = "categoryId", source = "categoryId")
   @Mapping(target = "categoryName", source = "categoryName")

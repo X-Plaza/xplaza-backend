@@ -6,13 +6,14 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.ProductVariationType;
 import com.xplaza.backend.http.dto.request.ProductVariationTypeRequest;
 import com.xplaza.backend.http.dto.response.ProductVariationTypeResponse;
 import com.xplaza.backend.jpa.dao.ProductVariationTypeDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductVariationTypeMapper {
   @Mapping(target = "productVarTypeId", source = "productVarTypeId")
   @Mapping(target = "varTypeName", source = "varTypeName")

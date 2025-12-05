@@ -61,6 +61,17 @@ public class Cart {
   private List<CartItem> items = new ArrayList<>();
 
   /**
+   * Add item to internal list.
+   */
+  public void addCartItem(CartItem item) {
+    if (this.items == null) {
+      this.items = new ArrayList<>();
+    }
+    this.items.add(item);
+    item.setCart(this);
+  }
+
+  /**
    * Get immutable list of items.
    */
   public List<CartItem> getItems() {

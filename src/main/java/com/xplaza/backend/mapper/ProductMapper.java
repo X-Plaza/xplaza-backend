@@ -6,13 +6,14 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.Product;
 import com.xplaza.backend.http.dto.request.ProductRequest;
 import com.xplaza.backend.http.dto.response.ProductResponse;
 import com.xplaza.backend.jpa.dao.ProductDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductMapper {
   @Mapping(target = "productId", source = "productId")
   @Mapping(target = "productName", source = "productName")

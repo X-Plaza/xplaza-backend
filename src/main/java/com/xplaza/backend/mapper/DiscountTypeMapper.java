@@ -6,13 +6,14 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.DiscountType;
 import com.xplaza.backend.http.dto.request.DiscountTypeRequest;
 import com.xplaza.backend.http.dto.response.DiscountTypeResponse;
 import com.xplaza.backend.jpa.dao.DiscountTypeDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DiscountTypeMapper {
   @Mapping(target = "discountTypeId", source = "discountTypeId")
   @Mapping(target = "discountTypeName", source = "discountTypeName")

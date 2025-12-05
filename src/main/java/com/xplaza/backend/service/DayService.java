@@ -37,7 +37,7 @@ public class DayService {
 
   public String getDayNameByID(Long id) {
     return dayRepo.findById(id)
-        .map(dayMapper::toEntityFromDao)
+        .map(dayMapper::mapDaoToEntity)
         .map(Day::getDayName)
         .orElse(null);
   }
@@ -48,6 +48,6 @@ public class DayService {
   }
 
   public List<Day> listDays() {
-    return dayRepo.findAll().stream().map(dayMapper::toEntityFromDao).collect(Collectors.toList());
+    return dayRepo.findAll().stream().map(dayMapper::mapDaoToEntity).collect(Collectors.toList());
   }
 }

@@ -6,13 +6,14 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.OrderDetails;
 import com.xplaza.backend.http.dto.request.OrderDetailsRequest;
 import com.xplaza.backend.http.dto.response.OrderDetailsResponse;
 import com.xplaza.backend.jpa.dao.OrderDetailsDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OrderDetailsMapper {
   OrderDetails toEntity(OrderDetailsRequest request);
 

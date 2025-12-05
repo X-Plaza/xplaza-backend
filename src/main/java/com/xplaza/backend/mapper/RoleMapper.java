@@ -5,13 +5,14 @@
 package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.Role;
 import com.xplaza.backend.http.dto.request.RoleRequest;
 import com.xplaza.backend.http.dto.response.RoleResponse;
 import com.xplaza.backend.jpa.dao.RoleDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RoleMapper {
   Role toEntity(RoleRequest entity);
 

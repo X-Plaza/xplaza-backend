@@ -5,13 +5,14 @@
 package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.Shop;
 import com.xplaza.backend.http.dto.request.ShopRequest;
 import com.xplaza.backend.http.dto.response.ShopResponse;
 import com.xplaza.backend.jpa.dao.ShopDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ShopMapper {
   ShopDao toDao(Shop entity);
 
