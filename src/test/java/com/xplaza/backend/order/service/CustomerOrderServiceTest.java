@@ -17,9 +17,10 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.xplaza.backend.cart.domain.entity.Cart;
 import com.xplaza.backend.cart.domain.entity.CartItem;
@@ -30,6 +31,7 @@ import com.xplaza.backend.order.domain.entity.CustomerOrder.OrderStatus;
 import com.xplaza.backend.order.domain.repository.CustomerOrderItemRepository;
 import com.xplaza.backend.order.domain.repository.CustomerOrderRepository;
 
+@ExtendWith(MockitoExtension.class)
 class CustomerOrderServiceTest {
 
   @Mock
@@ -51,8 +53,6 @@ class CustomerOrderServiceTest {
 
   @BeforeEach
   void setUp() {
-    MockitoAnnotations.openMocks(this);
-
     cart = Cart.builder()
         .id(cartId)
         .customerId(customerId)
