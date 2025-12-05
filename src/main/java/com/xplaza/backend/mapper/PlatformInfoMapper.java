@@ -5,13 +5,14 @@
 package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.PlatformInfo;
 import com.xplaza.backend.http.dto.request.PlatformInfoRequest;
 import com.xplaza.backend.http.dto.response.PlatformInfoResponse;
 import com.xplaza.backend.jpa.dao.PlatformInfoDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PlatformInfoMapper {
   PlatformInfo toEntity(PlatformInfoRequest request);
 

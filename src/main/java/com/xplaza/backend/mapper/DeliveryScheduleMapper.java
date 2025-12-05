@@ -5,6 +5,7 @@
 package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.Day;
 import com.xplaza.backend.domain.DeliverySchedule;
@@ -12,7 +13,7 @@ import com.xplaza.backend.http.dto.request.DeliveryScheduleRequest;
 import com.xplaza.backend.http.dto.response.DeliveryScheduleResponse;
 import com.xplaza.backend.jpa.dao.DeliveryScheduleDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DeliveryScheduleMapper {
   DeliverySchedule toEntity(DeliveryScheduleRequest request);
 

@@ -6,13 +6,14 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.ProductToStock;
 import com.xplaza.backend.http.dto.request.ProductStockRequest;
 import com.xplaza.backend.http.dto.response.ProductStockResponse;
 import com.xplaza.backend.jpa.dao.ProductToStockDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductStockMapper {
   @Mapping(target = "remainingUnit", source = "quantity")
   @Mapping(target = "shop.shopId", source = "shopId")

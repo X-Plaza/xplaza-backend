@@ -90,14 +90,14 @@ public class Review {
    * List of pros mentioned in the review.
    */
   @JdbcTypeCode(SqlTypes.ARRAY)
-  @Column(name = "pros", columnDefinition = "TEXT[]")
+  @Column(name = "pros")
   private String[] pros;
 
   /**
    * List of cons mentioned in the review.
    */
   @JdbcTypeCode(SqlTypes.ARRAY)
-  @Column(name = "cons", columnDefinition = "TEXT[]")
+  @Column(name = "cons")
   private String[] cons;
 
   // Votes (denormalized for performance)

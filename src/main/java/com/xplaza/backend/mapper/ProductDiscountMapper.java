@@ -6,13 +6,15 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.ProductDiscount;
 import com.xplaza.backend.http.dto.request.ProductDiscountRequest;
 import com.xplaza.backend.http.dto.response.ProductDiscountResponse;
 import com.xplaza.backend.jpa.dao.ProductDiscountDao;
 
-@Mapper(componentModel = "spring", uses = { ProductMapper.class, DiscountTypeMapper.class, CurrencyMapper.class })
+@Mapper(componentModel = "spring", uses = { ProductMapper.class, DiscountTypeMapper.class,
+    CurrencyMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductDiscountMapper {
   @Mapping(target = "productDiscountId", source = "productDiscountId")
   @Mapping(target = "discountType", source = "discountType")

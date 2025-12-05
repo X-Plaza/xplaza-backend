@@ -5,11 +5,12 @@
 package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.ProductDiscount;
 import com.xplaza.backend.jpa.dao.ProductDiscountDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DiscountListMapper {
   ProductDiscountDao toDao(ProductDiscount entity);
 

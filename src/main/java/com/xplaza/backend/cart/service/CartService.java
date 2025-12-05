@@ -127,7 +127,7 @@ public class CartService {
         .imageUrl(imageUrl)
         .build();
 
-    cart.getItems().add(item);
+    cart.addCartItem(item);
     cartRepository.save(cart);
 
     return item;

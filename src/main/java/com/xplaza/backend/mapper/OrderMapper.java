@@ -5,13 +5,14 @@
 package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.Order;
 import com.xplaza.backend.http.dto.request.OrderRequest;
 import com.xplaza.backend.http.dto.response.OrderResponse;
 import com.xplaza.backend.jpa.dao.OrderDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OrderMapper {
   Order toEntity(OrderRequest request);
 

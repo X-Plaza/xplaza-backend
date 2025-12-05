@@ -5,13 +5,14 @@
 package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.Location;
 import com.xplaza.backend.http.dto.request.LocationRequest;
 import com.xplaza.backend.http.dto.response.LocationResponse;
 import com.xplaza.backend.jpa.dao.LocationDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface LocationMapper {
   Location toEntity(LocationRequest request);
 

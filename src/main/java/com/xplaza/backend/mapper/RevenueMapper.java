@@ -6,11 +6,12 @@ package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.Revenue;
 import com.xplaza.backend.jpa.dao.RevenueDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface RevenueMapper {
   @Mapping(target = "totalExpense", source = "totalExpense")
   @Mapping(target = "totalIncome", source = "totalIncome")

@@ -5,13 +5,14 @@
 package com.xplaza.backend.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 import com.xplaza.backend.domain.Day;
 import com.xplaza.backend.http.dto.request.DayRequest;
 import com.xplaza.backend.http.dto.response.DayResponse;
 import com.xplaza.backend.jpa.dao.DayDao;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DayMapper {
   Day toEntity(DayRequest request);
 
@@ -19,5 +20,5 @@ public interface DayMapper {
 
   DayDao toDao(Day entity);
 
-  Day toEntityFromDao(DayDao dao);
+  Day mapDaoToEntity(DayDao dao);
 }
