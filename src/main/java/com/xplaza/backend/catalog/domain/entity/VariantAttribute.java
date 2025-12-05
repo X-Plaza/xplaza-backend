@@ -62,7 +62,7 @@ public class VariantAttribute {
   }
 
   public String getValue() {
-    return attributeValue != null ? attributeValue.getValue() : null;
+    return attributeValue != null ? attributeValue.getDisplayValue() : null;
   }
 
   public String getValueCode() {

@@ -10,9 +10,6 @@ import jakarta.persistence.*;
 
 import lombok.*;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
 /**
  * Represents a possible value for an attribute.
  * 
@@ -42,8 +39,8 @@ public class AttributeValue {
   /**
    * Display value shown to customers. Examples: "Red", "Extra Large", "Cotton"
    */
-  @Column(name = "value", nullable = false, length = 255)
-  private String value;
+  @Column(name = "display_value", nullable = false, length = 255)
+  private String displayValue;
 
   /**
    * URL-safe code for the value. Examples: "red", "xl", "cotton"
@@ -57,8 +54,7 @@ public class AttributeValue {
    * Examples: - For colors: {"hex": "#FF0000", "rgb": "255,0,0"} - For sizes:
    * {"measurements": {"chest": 42, "waist": 32}}
    */
-  @JdbcTypeCode(SqlTypes.JSON)
-  @Column(name = "metadata", columnDefinition = "jsonb")
+  @Column(name = "metadata", columnDefinition = "TEXT")
   private String metadata;
 
   /**
