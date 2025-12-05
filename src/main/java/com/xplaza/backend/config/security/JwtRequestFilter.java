@@ -27,10 +27,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xplaza.backend.auth.service.AuthUserDetailsService;
 import com.xplaza.backend.common.util.ErrorUtils;
 import com.xplaza.backend.common.util.JwtUtil;
 import com.xplaza.backend.exception.InvalidJwtTokenException;
-import com.xplaza.backend.service.AuthUserDetailsService;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
