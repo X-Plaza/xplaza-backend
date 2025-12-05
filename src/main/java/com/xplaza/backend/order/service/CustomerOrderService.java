@@ -98,7 +98,7 @@ public class CustomerOrderService {
       CustomerOrderItem orderItem = CustomerOrderItem.builder()
           .order(order)
           .productId(cartItem.getProductId())
-          .variantId(cartItem.getVariantId() != null ? UUID.fromString(cartItem.getVariantId().toString()) : null)
+          .variantId(cartItem.getVariantId())
           .shopId(cartItem.getShopId())
           .productName(cartItem.getProductName() != null ? cartItem.getProductName()
               : "Product " + cartItem.getProductId())
@@ -392,17 +392,9 @@ public class CustomerOrderService {
 
   private String generateOrderNumber() {
     String date = LocalDate.now().format(ORDER_DATE_FORMAT);
-    String random = String.format("%04d", RANDOM.nextInt(10000));
-    String orderNumber = "ORD-" + date + "-" + random;
-
-    // Ensure uniqueness
-    int attempts = 0;
-    while (orderRepository.existsByOrderNumber(orderNumber) && attempts < 10) {
-      random = String.format("%04d", RANDOM.nextInt(10000));
-      orderNumber = "ORD-" + date + "-" + random;
-      attempts++;
-    }
-
-    return orderNumber;
+    Long sequence = orderRepository.getNextOrderSequence();
+    // Format sequence as 6-digit number with leading zeros
+    String seqStr = String.format("%06d", sequence);
+    return "ORD-" + date + "-" + seqStr;
   }
 }

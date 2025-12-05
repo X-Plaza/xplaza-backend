@@ -29,6 +29,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "order")
 public class CustomerOrderItem {
 
   @Id

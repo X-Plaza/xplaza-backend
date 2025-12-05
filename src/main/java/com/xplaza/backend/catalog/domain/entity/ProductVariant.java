@@ -187,7 +187,7 @@ public class ProductVariant {
       return sku;
     }
     return attributes.stream()
-        .map(attr -> attr.getAttributeValue().getValue())
+        .map(attr -> attr.getAttributeValue().getDisplayValue())
         .reduce((a, b) -> a + " / " + b)
         .orElse(sku);
   }

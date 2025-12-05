@@ -7,6 +7,7 @@ package com.xplaza.backend.cart.domain.entity;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -56,7 +57,15 @@ public class Cart {
 
   @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
   @Builder.Default
+  @Getter(AccessLevel.NONE)
   private List<CartItem> items = new ArrayList<>();
+
+  /**
+   * Get immutable list of items.
+   */
+  public List<CartItem> getItems() {
+    return items == null ? List.of() : Collections.unmodifiableList(items);
+  }
 
   /** Applied coupon code */
   @Column(name = "coupon_code", length = 50)
@@ -145,7 +154,7 @@ public class Cart {
   /**
    * Add an item to the cart.
    */
-  public CartItem addItem(Long productId, Long variantId, Long shopId, int quantity, BigDecimal unitPrice) {
+  public CartItem addItem(Long productId, UUID variantId, Long shopId, int quantity, BigDecimal unitPrice) {
     // Check if item already exists
     CartItem existingItem = findItem(productId, variantId);
     if (existingItem != null && existingItem.getStatus() == CartItem.ItemStatus.ACTIVE) {
@@ -182,7 +191,7 @@ public class Cart {
   /**
    * Find an item by product and variant.
    */
-  public CartItem findItem(Long productId, Long variantId) {
+  public CartItem findItem(Long productId, UUID variantId) {
     if (items == null)
       return null;
     return items.stream()

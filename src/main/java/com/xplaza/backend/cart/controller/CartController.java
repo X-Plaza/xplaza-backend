@@ -175,7 +175,7 @@ public class CartController {
 
   public record AddItemRequest(
       Long productId,
-      Long variantId,
+      UUID variantId,
       Long shopId,
       int quantity,
       BigDecimal unitPrice,

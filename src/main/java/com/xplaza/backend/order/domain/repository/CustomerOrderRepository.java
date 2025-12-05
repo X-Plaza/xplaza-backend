@@ -107,4 +107,7 @@ public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, UU
   List<CustomerOrder> findOrdersWithPendingPayment(@Param("cutoff") Instant cutoff);
 
   boolean existsByOrderNumber(String orderNumber);
+
+  @Query(value = "SELECT nextval('order_number_seq')", nativeQuery = true)
+  Long getNextOrderSequence();
 }

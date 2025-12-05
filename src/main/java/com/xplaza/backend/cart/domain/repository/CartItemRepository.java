@@ -37,7 +37,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, UUID> {
    */
   @Query("SELECT ci FROM CartItem ci WHERE ci.cart.id = :cartId AND ci.productId = :productId AND ci.variantId = :variantId")
   CartItem findByCartIdAndProductAndVariant(@Param("cartId") UUID cartId, @Param("productId") Long productId,
-      @Param("variantId") Long variantId);
+      @Param("variantId") UUID variantId);
 
   /**
    * Find item by cart and product (without variant).
@@ -86,5 +86,5 @@ public interface CartItemRepository extends JpaRepository<CartItem, UUID> {
   /**
    * Find items by variant ID (for inventory updates).
    */
-  List<CartItem> findByVariantId(Long variantId);
+  List<CartItem> findByVariantId(UUID variantId);
 }

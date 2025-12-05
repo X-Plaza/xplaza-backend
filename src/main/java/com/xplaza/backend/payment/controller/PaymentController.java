@@ -8,6 +8,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +39,7 @@ public class PaymentController {
 
   @Operation(summary = "Create payment authorization")
   @PostMapping("/authorize")
-  public ResponseEntity<PaymentTransaction> authorize(@RequestBody CreateAuthorizationRequest request) {
+  public ResponseEntity<PaymentTransaction> authorize(@RequestBody @Valid CreateAuthorizationRequest request) {
     PaymentTransaction txn = paymentService.createAuthorization(
         request.orderId(),
         request.customerId(),
@@ -174,11 +177,11 @@ public class PaymentController {
   // ==================== Request DTOs ====================
 
   public record CreateAuthorizationRequest(
-      Long orderId,
-      Long customerId,
-      BigDecimal amount,
-      String currency,
-      PaymentTransaction.PaymentMethodType methodType,
+      @NotNull Long orderId,
+      @NotNull Long customerId,
+      @NotNull @Positive BigDecimal amount,
+      @NotBlank @Size(min = 3, max = 3) String currency,
+      @NotNull PaymentTransaction.PaymentMethodType methodType,
       String lastFourDigits,
       String cardBrand
   ) {

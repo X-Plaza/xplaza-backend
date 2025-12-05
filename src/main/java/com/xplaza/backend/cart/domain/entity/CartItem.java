@@ -26,6 +26,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "cart")
 public class CartItem {
 
   @Id
@@ -40,7 +41,7 @@ public class CartItem {
   private Long productId;
 
   @Column(name = "variant_id")
-  private Long variantId;
+  private UUID variantId;
 
   @Column(name = "shop_id", nullable = false)
   private Long shopId;

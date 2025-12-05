@@ -13,6 +13,9 @@ import jakarta.persistence.*;
 
 import lombok.*;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 /**
  * Product Review submitted by a customer.
  * 
@@ -84,16 +87,18 @@ public class Review {
   private String body;
 
   /**
-   * List of pros mentioned in the review (stored as JSON).
+   * List of pros mentioned in the review.
    */
-  @Column(name = "pros", columnDefinition = "TEXT")
-  private String pros;
+  @JdbcTypeCode(SqlTypes.ARRAY)
+  @Column(name = "pros", columnDefinition = "TEXT[]")
+  private String[] pros;
 
   /**
-   * List of cons mentioned in the review (stored as JSON).
+   * List of cons mentioned in the review.
    */
-  @Column(name = "cons", columnDefinition = "TEXT")
-  private String cons;
+  @JdbcTypeCode(SqlTypes.ARRAY)
+  @Column(name = "cons", columnDefinition = "TEXT[]")
+  private String[] cons;
 
   // Votes (denormalized for performance)
   @Column(name = "helpful_votes")

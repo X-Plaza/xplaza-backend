@@ -96,7 +96,7 @@ public class CartService {
   /**
    * Add item to cart.
    */
-  public CartItem addItem(UUID cartId, Long productId, Long variantId, Long shopId,
+  public CartItem addItem(UUID cartId, Long productId, UUID variantId, Long shopId,
       int quantity, BigDecimal unitPrice, String productName, String variantName,
       String sku, String imageUrl) {
     Cart cart = cartRepository.findByIdWithItems(cartId)

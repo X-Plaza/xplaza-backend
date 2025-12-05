@@ -40,7 +40,7 @@ public class AttributeValue {
    * Display value shown to customers. Examples: "Red", "Extra Large", "Cotton"
    */
   @Column(name = "display_value", nullable = false, length = 255)
-  private String value;
+  private String displayValue;
 
   /**
    * URL-safe code for the value. Examples: "red", "xl", "cotton"
