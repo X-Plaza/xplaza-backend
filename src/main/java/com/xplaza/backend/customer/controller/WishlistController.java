@@ -25,7 +25,7 @@ import com.xplaza.backend.customer.service.WishlistService;
  * REST controller for wishlist operations.
  */
 @RestController
-@RequestMapping("/api/v2/wishlists")
+@RequestMapping("/api/v1/wishlists")
 @RequiredArgsConstructor
 @Tag(name = "Wishlist", description = "Customer wishlist management")
 public class WishlistController {
