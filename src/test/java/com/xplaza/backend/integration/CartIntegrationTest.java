@@ -72,7 +72,6 @@ public class CartIntegrationTest extends BaseIntegrationTest {
         .andExpect(status().isCreated())
         .andReturn().getResponse().getContentAsString();
 
-    System.out.println("DEBUG: Item Response: " + itemResponse);
 
     // The response is CartItem, which has an ID (UUID)
     String itemId = objectMapper.readTree(itemResponse).path("id").asText();
