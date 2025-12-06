@@ -39,7 +39,7 @@ public class StockReservation {
   private InventoryItem inventoryItem;
 
   @Column(name = "order_id")
-  private Long orderId;
+  private UUID orderId;
 
   @Column(name = "cart_id")
   private UUID cartId;
@@ -149,7 +149,7 @@ public class StockReservation {
   /**
    * Convert cart reservation to order reservation.
    */
-  public void convertToOrder(Long orderId) {
+  public void convertToOrder(UUID orderId) {
     this.orderId = orderId;
     this.type = ReservationType.ORDER;
     this.expiresAt = Instant.now().plus(7, ChronoUnit.DAYS);

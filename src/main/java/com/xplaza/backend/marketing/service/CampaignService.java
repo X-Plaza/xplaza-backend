@@ -198,6 +198,16 @@ public class CampaignService {
    * Apply campaign to an order and calculate discount.
    */
   public BigDecimal applyCampaign(String code, BigDecimal subtotal, int customerUseCount) {
+    BigDecimal discount = validateCoupon(code, subtotal, customerUseCount);
+    recordUsage(code);
+    return discount;
+  }
+
+  /**
+   * Validate coupon and calculate discount without recording usage.
+   */
+  @Transactional(readOnly = true)
+  public BigDecimal validateCoupon(String code, BigDecimal subtotal, int customerUseCount) {
     Campaign campaign = campaignRepository.findByCode(code)
         .orElseThrow(() -> new IllegalArgumentException("Campaign not found: " + code));
 
@@ -213,14 +223,19 @@ public class CampaignService {
       throw new IllegalStateException("Customer has reached usage limit for this campaign");
     }
 
-    BigDecimal discount = campaign.calculateDiscount(subtotal);
+    return campaign.calculateDiscount(subtotal);
+  }
 
-    // Record the use
+  /**
+   * Record usage of a campaign.
+   */
+  public void recordUsage(String code) {
+    Campaign campaign = campaignRepository.findByCode(code)
+        .orElseThrow(() -> new IllegalArgumentException("Campaign not found: " + code));
+
     campaign.recordUse();
     campaignRepository.save(campaign);
-
-    log.info("Applied campaign {} for discount: {}", code, discount);
-    return discount;
+    log.info("Recorded usage for campaign: {}", code);
   }
 
   /**

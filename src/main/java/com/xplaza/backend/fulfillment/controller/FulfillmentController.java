@@ -93,7 +93,7 @@ public class FulfillmentController {
 
   @Operation(summary = "Get shipments for an order")
   @GetMapping("/shipments/orders/{orderId}")
-  public ResponseEntity<List<Shipment>> getOrderShipments(@PathVariable Long orderId) {
+  public ResponseEntity<List<Shipment>> getOrderShipments(@PathVariable UUID orderId) {
     return ResponseEntity.ok(fulfillmentService.getOrderShipments(orderId));
   }
 
@@ -189,7 +189,7 @@ public class FulfillmentController {
 
   @Operation(summary = "Get returns for an order")
   @GetMapping("/returns/orders/{orderId}")
-  public ResponseEntity<List<Return>> getOrderReturns(@PathVariable Long orderId) {
+  public ResponseEntity<List<Return>> getOrderReturns(@PathVariable UUID orderId) {
     return ResponseEntity.ok(fulfillmentService.getOrderReturns(orderId));
   }
 
@@ -224,7 +224,7 @@ public class FulfillmentController {
   // ==================== Request DTOs ====================
 
   public record CreateShipmentRequest(
-      Long orderId,
+      UUID orderId,
       Long warehouseId,
       Long carrierId,
       Shipment.ShippingMethod shippingMethod,
@@ -240,7 +240,7 @@ public class FulfillmentController {
   }
 
   public record AddShipmentItemRequest(
-      Long orderItemId,
+      UUID orderItemId,
       Long productId,
       UUID variantId,
       String sku,
@@ -257,7 +257,7 @@ public class FulfillmentController {
   }
 
   public record CreateReturnRequest(
-      Long orderId,
+      UUID orderId,
       Long customerId,
       Return.ReturnReason reason,
       String reasonDetail,

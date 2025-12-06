@@ -6,6 +6,7 @@ package com.xplaza.backend.payment.controller;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import jakarta.validation.Valid;
@@ -94,7 +95,7 @@ public class PaymentController {
 
   @Operation(summary = "Get transactions for an order")
   @GetMapping("/orders/{orderId}")
-  public ResponseEntity<List<PaymentTransaction>> getOrderTransactions(@PathVariable Long orderId) {
+  public ResponseEntity<List<PaymentTransaction>> getOrderTransactions(@PathVariable UUID orderId) {
     return ResponseEntity.ok(paymentService.getOrderTransactions(orderId));
   }
 
@@ -108,13 +109,13 @@ public class PaymentController {
 
   @Operation(summary = "Get total paid amount for order")
   @GetMapping("/orders/{orderId}/paid")
-  public ResponseEntity<BigDecimal> getTotalPaid(@PathVariable Long orderId) {
+  public ResponseEntity<BigDecimal> getTotalPaid(@PathVariable UUID orderId) {
     return ResponseEntity.ok(paymentService.getTotalPaidAmount(orderId));
   }
 
   @Operation(summary = "Get total refunded amount for order")
   @GetMapping("/orders/{orderId}/refunded")
-  public ResponseEntity<BigDecimal> getTotalRefunded(@PathVariable Long orderId) {
+  public ResponseEntity<BigDecimal> getTotalRefunded(@PathVariable UUID orderId) {
     return ResponseEntity.ok(paymentService.getTotalRefundedAmount(orderId));
   }
 
@@ -170,14 +171,33 @@ public class PaymentController {
 
   @Operation(summary = "Get refunds for an order")
   @GetMapping("/refunds/orders/{orderId}")
-  public ResponseEntity<List<Refund>> getOrderRefunds(@PathVariable Long orderId) {
+  public ResponseEntity<List<Refund>> getOrderRefunds(@PathVariable UUID orderId) {
     return ResponseEntity.ok(paymentService.getOrderRefunds(orderId));
+  }
+
+  @Operation(summary = "Create Stripe Payment Intent")
+  @PostMapping("/create-payment-intent")
+  public ResponseEntity<String> createPaymentIntent(@RequestBody @Valid CreatePaymentIntentRequest request) {
+    String clientSecret = paymentService.createPaymentIntent(
+        request.amount(),
+        request.currency(),
+        request.description(),
+        request.metadata());
+    return ResponseEntity.ok(clientSecret);
   }
 
   // ==================== Request DTOs ====================
 
+  public record CreatePaymentIntentRequest(
+      @NotNull @Positive BigDecimal amount,
+      @NotBlank @Size(min = 3, max = 3) String currency,
+      String description,
+      Map<String, String> metadata
+  ) {
+  }
+
   public record CreateAuthorizationRequest(
-      @NotNull Long orderId,
+      @NotNull UUID orderId,
       @NotNull Long customerId,
       @NotNull @Positive BigDecimal amount,
       @NotBlank @Size(min = 3, max = 3) String currency,
@@ -188,7 +208,7 @@ public class PaymentController {
   }
 
   public record CreateSaleRequest(
-      Long orderId,
+      UUID orderId,
       Long customerId,
       BigDecimal amount,
       String currency,
@@ -197,7 +217,7 @@ public class PaymentController {
   }
 
   public record CreateRefundRequest(
-      Long orderId,
+      UUID orderId,
       BigDecimal amount,
       String currency,
       Refund.RefundReason reason,

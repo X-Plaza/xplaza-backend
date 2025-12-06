@@ -24,7 +24,7 @@ import com.xplaza.backend.fulfillment.domain.entity.Shipment;
 @Repository
 public interface ShipmentRepository extends JpaRepository<Shipment, UUID> {
 
-  List<Shipment> findByOrderId(Long orderId);
+  List<Shipment> findByOrderId(UUID orderId);
 
   Optional<Shipment> findByTrackingNumber(String trackingNumber);
 
@@ -41,7 +41,7 @@ public interface ShipmentRepository extends JpaRepository<Shipment, UUID> {
   Page<Shipment> findInTransitByCarrier(@Param("carrierId") Long carrierId, Pageable pageable);
 
   @Query("SELECT COUNT(s) FROM Shipment s WHERE s.orderId = :orderId AND s.status = 'DELIVERED'")
-  long countDeliveredByOrderId(@Param("orderId") Long orderId);
+  long countDeliveredByOrderId(@Param("orderId") UUID orderId);
 
   @Query("SELECT s FROM Shipment s LEFT JOIN FETCH s.items LEFT JOIN FETCH s.trackingEvents WHERE s.shipmentId = :shipmentId")
   Optional<Shipment> findByIdWithDetails(@Param("shipmentId") UUID shipmentId);

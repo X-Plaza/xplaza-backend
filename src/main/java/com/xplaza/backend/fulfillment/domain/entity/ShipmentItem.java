@@ -34,7 +34,7 @@ public class ShipmentItem {
   private Shipment shipment;
 
   @Column(name = "order_item_id", nullable = false)
-  private Long orderItemId;
+  private UUID orderItemId;
 
   @Column(name = "product_id", nullable = false)
   private Long productId;

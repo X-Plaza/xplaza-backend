@@ -21,6 +21,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.xplaza.backend.auth.domain.entity.AdminUser;
+
 @ExtendWith(MockitoExtension.class)
 @DisplayName("JwtUtil Unit Tests")
 class JwtUtilTest {
@@ -45,9 +47,11 @@ class JwtUtilTest {
     jwtUtil.init();
 
     // Create test user
-    testUser = User.withUsername("testuser")
+    testUser = AdminUser.builder()
+        .id(1L)
+        .username("testuser")
         .password("password")
-        .authorities("ADMIN")
+        .role("ADMIN")
         .build();
   }
 

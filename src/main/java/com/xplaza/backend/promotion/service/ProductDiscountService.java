@@ -4,6 +4,8 @@
  */
 package com.xplaza.backend.promotion.service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -74,5 +76,41 @@ public class ProductDiscountService {
       throw new ResourceNotFoundException("ProductDiscount not found: " + id);
     }
     productDiscountRepository.deleteById(id);
+  }
+
+  public BigDecimal calculateDiscountedPrice(Product product) {
+    List<ProductDiscount> discounts = productDiscountRepository.findByProductProductId(product.getProductId());
+    LocalDateTime now = LocalDateTime.now();
+
+    BigDecimal originalPrice = BigDecimal.valueOf(product.getProductSellingPrice());
+    BigDecimal bestPrice = originalPrice;
+
+    for (ProductDiscount discount : discounts) {
+      if (Boolean.TRUE.equals(discount.getIsActive()) &&
+          (discount.getStartDate() == null || !now.isBefore(discount.getStartDate())) &&
+          (discount.getEndDate() == null || !now.isAfter(discount.getEndDate()))) {
+
+        BigDecimal currentDiscountedPrice = originalPrice;
+        String typeName = discount.getDiscountType() != null
+            ? discount.getDiscountType().getDiscountTypeName().toUpperCase()
+            : "";
+
+        if (typeName.contains("PERCENT")) {
+          BigDecimal percent = BigDecimal.valueOf(discount.getDiscountValue()).divide(BigDecimal.valueOf(100));
+          BigDecimal discountAmount = originalPrice.multiply(percent);
+          currentDiscountedPrice = originalPrice.subtract(discountAmount);
+        } else {
+          // Assume fixed amount
+          BigDecimal amount = BigDecimal.valueOf(discount.getDiscountValue());
+          currentDiscountedPrice = originalPrice.subtract(amount);
+        }
+
+        if (currentDiscountedPrice.compareTo(bestPrice) < 0) {
+          bestPrice = currentDiscountedPrice;
+        }
+      }
+    }
+
+    return bestPrice.max(BigDecimal.ZERO);
   }
 }

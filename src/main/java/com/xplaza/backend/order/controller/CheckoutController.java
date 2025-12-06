@@ -106,10 +106,8 @@ public class CheckoutController {
   @PostMapping("/{checkoutId}/coupon")
   public ResponseEntity<CheckoutSession> applyCoupon(
       @PathVariable UUID checkoutId,
-      @RequestParam Long couponId,
-      @RequestParam String couponCode,
-      @RequestParam BigDecimal discountAmount) {
-    CheckoutSession checkout = checkoutService.applyCoupon(checkoutId, couponId, couponCode, discountAmount);
+      @RequestParam String couponCode) {
+    CheckoutSession checkout = checkoutService.applyCoupon(checkoutId, couponCode);
     return ResponseEntity.ok(checkout);
   }
 

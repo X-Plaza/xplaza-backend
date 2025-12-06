@@ -84,6 +84,7 @@ public class InventoryController {
   @PostMapping("/reserve")
   public ResponseEntity<StockReservation> reserveStock(@RequestBody ReserveStockRequest request) {
     StockReservation reservation = inventoryService.reserveStock(
+        request.productId(),
         request.variantId(),
         request.warehouseId(),
         request.quantity(),
@@ -174,10 +175,11 @@ public class InventoryController {
   }
 
   public record ReserveStockRequest(
+      Long productId,
       UUID variantId,
       Long warehouseId,
       int quantity,
-      Long orderId,
+      UUID orderId,
       UUID cartId
   ) {
   }

@@ -7,12 +7,14 @@ package com.xplaza.backend.order.domain.repository;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.xplaza.backend.dashboard.dto.TopProduct;
 import com.xplaza.backend.order.domain.entity.CustomerOrderItem;
 
 /**
@@ -42,4 +44,11 @@ public interface CustomerOrderItemRepository extends JpaRepository<CustomerOrder
 
   @Query("SELECT oi.productId, SUM(oi.quantity) as sold FROM CustomerOrderItem oi WHERE oi.shopId = :shopId AND oi.order.status = 'DELIVERED' GROUP BY oi.productId ORDER BY sold DESC")
   List<Object[]> findTopSellingProductsByShop(@Param("shopId") Long shopId);
+
+  @Query("SELECT new com.xplaza.backend.dashboard.dto.TopProduct(i.productId, i.productName, SUM(i.quantity), SUM(i.totalPrice)) "
+      +
+      "FROM CustomerOrderItem i " +
+      "GROUP BY i.productId, i.productName " +
+      "ORDER BY SUM(i.totalPrice) DESC")
+  List<TopProduct> findTopSellingProducts(Pageable pageable);
 }

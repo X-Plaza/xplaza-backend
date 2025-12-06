@@ -4,7 +4,7 @@ spring:
       on-profile: local
 
   datasource:
-    url: jdbc:h2:mem:xplaza;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:xplaza;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATE SCHEMA IF NOT EXISTS xplaza
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -14,9 +14,15 @@ spring:
       ddl-auto: update
     database-platform: org.hibernate.dialect.H2Dialect
     show-sql: true
+    properties:
+      hibernate:
+        default_schema: xplaza
 
   flyway:
     enabled: false
+    locations: classpath:db/migration
+    schemas: xplaza
+    baseline-on-migrate: true
 
   h2:
     console:

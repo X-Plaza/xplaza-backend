@@ -38,11 +38,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
   private final AuthUserDetailsService authUserDetailsService;
   private final JwtUtil jwtUtil;
   private final ErrorUtils errorUtils;
+  private final ObjectMapper objectMapper;
 
-  public JwtRequestFilter(AuthUserDetailsService authUserDetailsService, JwtUtil jwtUtil, ErrorUtils errorUtils) {
+  public JwtRequestFilter(AuthUserDetailsService authUserDetailsService, JwtUtil jwtUtil, ErrorUtils errorUtils,
+      ObjectMapper objectMapper) {
     this.authUserDetailsService = authUserDetailsService;
     this.jwtUtil = jwtUtil;
     this.errorUtils = errorUtils;
+    this.objectMapper = objectMapper;
   }
 
   @Override
@@ -74,7 +77,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
   private void sendInvalidJwtTokenExceptionResponse(HttpServletResponse response, InvalidJwtTokenException e)
       throws IOException {
     var errorResponse = errorUtils.buildErrorResponse(e);
-    ObjectMapper objectMapper = new ObjectMapper();
     String jsonResponse = objectMapper.writeValueAsString(errorResponse.error());
     response.setHeader("Content-Type", "application/json");
     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

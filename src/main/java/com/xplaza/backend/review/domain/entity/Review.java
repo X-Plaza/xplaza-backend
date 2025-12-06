@@ -50,10 +50,10 @@ public class Review {
    * Optional: order that this review is for (for verified purchase).
    */
   @Column(name = "order_id")
-  private Long orderId;
+  private UUID orderId;
 
   @Column(name = "order_item_id")
-  private Long orderItemId;
+  private UUID orderItemId;
 
   @Column(name = "customer_id", nullable = false)
   private Long customerId;

@@ -40,7 +40,7 @@ public class Return {
   private String rmaNumber;
 
   @Column(name = "order_id", nullable = false)
-  private Long orderId;
+  private UUID orderId;
 
   @Column(name = "customer_id", nullable = false)
   private Long customerId;
@@ -107,7 +107,7 @@ public class Return {
 
   // Exchange info (if type = EXCHANGE)
   @Column(name = "exchange_order_id")
-  private Long exchangeOrderId;
+  private UUID exchangeOrderId;
 
   // Store credit (if resolution = STORE_CREDIT)
   @Column(name = "store_credit_code", length = 50)

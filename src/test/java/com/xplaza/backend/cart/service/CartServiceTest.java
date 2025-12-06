@@ -36,6 +36,18 @@ class CartServiceTest {
   @Mock
   private CartItemRepository cartItemRepository;
 
+  @Mock
+  private com.xplaza.backend.catalog.domain.repository.ProductRepository productRepository;
+
+  @Mock
+  private com.xplaza.backend.catalog.domain.repository.ProductVariantRepository productVariantRepository;
+
+  @Mock
+  private com.xplaza.backend.inventory.service.InventoryService inventoryService;
+
+  @Mock
+  private com.xplaza.backend.promotion.service.ProductDiscountService productDiscountService;
+
   @InjectMocks
   private CartService cartService;
 
@@ -84,7 +96,23 @@ class CartServiceTest {
     Long shopId = 20L;
 
     given(cartRepository.findByIdWithItems(cartId)).willReturn(Optional.of(activeCart));
-    // cartRepository.save will be called
+
+    com.xplaza.backend.catalog.domain.entity.Product product = new com.xplaza.backend.catalog.domain.entity.Product();
+    product.setProductId(productId);
+    product.setProductSellingPrice(100.00);
+    com.xplaza.backend.shop.domain.entity.Shop shop = new com.xplaza.backend.shop.domain.entity.Shop();
+    shop.setShopId(shopId);
+    product.setShop(shop);
+    given(productRepository.findById(productId)).willReturn(Optional.of(product));
+    given(productDiscountService.calculateDiscountedPrice(product)).willReturn(BigDecimal.valueOf(100.00));
+
+    com.xplaza.backend.catalog.domain.entity.ProductVariant variant = new com.xplaza.backend.catalog.domain.entity.ProductVariant();
+    variant.setVariantId(variantId);
+    variant.setPrice(BigDecimal.valueOf(100.00));
+    given(productVariantRepository.findById(variantId)).willReturn(Optional.of(variant));
+
+    given(inventoryService.getAvailableQuantityByVariant(variantId)).willReturn(10);
+    given(cartItemRepository.save(any(CartItem.class))).willAnswer(invocation -> invocation.getArgument(0));
 
     CartItem result = cartService.addItem(
         cartId, productId, variantId, shopId, 2, BigDecimal.valueOf(100.00),
@@ -93,7 +121,7 @@ class CartServiceTest {
     assertThat(activeCart.getItems()).hasSize(1);
     assertThat(result.getProductId()).isEqualTo(productId);
     assertThat(result.getQuantity()).isEqualTo(2);
-    verify(cartRepository).save(activeCart);
+    verify(cartItemRepository).save(any(CartItem.class));
   }
 
   @Test
@@ -114,6 +142,20 @@ class CartServiceTest {
     activeCart.addCartItem(existingItem);
 
     given(cartRepository.findByIdWithItems(cartId)).willReturn(Optional.of(activeCart));
+
+    com.xplaza.backend.catalog.domain.entity.Product product = new com.xplaza.backend.catalog.domain.entity.Product();
+    product.setProductId(productId);
+    product.setProductSellingPrice(100.00);
+    given(productRepository.findById(productId)).willReturn(Optional.of(product));
+    given(productDiscountService.calculateDiscountedPrice(product)).willReturn(BigDecimal.valueOf(100.00));
+
+    com.xplaza.backend.catalog.domain.entity.ProductVariant variant = new com.xplaza.backend.catalog.domain.entity.ProductVariant();
+    variant.setVariantId(variantId);
+    variant.setPrice(BigDecimal.valueOf(100.00));
+    given(productVariantRepository.findById(variantId)).willReturn(Optional.of(variant));
+
+    given(inventoryService.getAvailableQuantityByVariant(variantId)).willReturn(10);
+
     given(cartItemRepository.save(any(CartItem.class))).willAnswer(invocation -> invocation.getArgument(0));
 
     CartItem result = cartService.addItem(

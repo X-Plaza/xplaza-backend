@@ -43,6 +43,15 @@ class CustomerOrderServiceTest {
   @Mock
   private CartRepository cartRepository;
 
+  @Mock
+  private com.xplaza.backend.payment.service.PaymentService paymentService;
+
+  @Mock
+  private com.xplaza.backend.notification.service.NotificationService notificationService;
+
+  @Mock
+  private com.xplaza.backend.inventory.service.InventoryService inventoryService;
+
   @InjectMocks
   private CustomerOrderService orderService;
 

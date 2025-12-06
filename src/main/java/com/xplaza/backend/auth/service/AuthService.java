@@ -29,12 +29,15 @@ public class AuthService {
   private final PasswordEncoder passwordEncoder;
   private final JwtUtil jwtUtil;
 
+  private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuthService.class);
+
   @Transactional
   public AuthenticationResponse login(AuthenticationRequest request) {
     AdminUser user = adminUserRepository.findByUsername(request.getUsername())
         .orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
 
     if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+      log.error("Authentication failed for user: {}", user.getUsername());
       throw new BadCredentialsException("Invalid username or password");
     }
 

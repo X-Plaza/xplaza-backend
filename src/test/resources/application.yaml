@@ -1,0 +1,10 @@
+stripe:
+  api-key: test-stripe-api-key
+  webhook-secret: test-stripe-webhook-secret
+
+spring:
+  profiles:
+    active: local
+  mail:
+    username: test-email-user
+    password: test-email-password

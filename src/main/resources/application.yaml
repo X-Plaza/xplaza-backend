@@ -32,6 +32,10 @@ spring:
           starttls:
             enable: true
 
+stripe:
+  api-key: ${STRIPE_API_KEY}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET}
+
 resilience4j.retry:
   instances:
     globalRetry:

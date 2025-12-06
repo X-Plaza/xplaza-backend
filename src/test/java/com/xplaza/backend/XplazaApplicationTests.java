@@ -6,8 +6,12 @@ package com.xplaza.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+
+import com.xplaza.backend.config.TestConfig;
 
 @SpringBootTest
+@Import(TestConfig.class)
 class XplazaApplicationTests {
 
   @Test

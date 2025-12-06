@@ -25,6 +25,10 @@ import com.xplaza.backend.fulfillment.domain.entity.ShipmentTrackingEvent;
 import com.xplaza.backend.fulfillment.domain.repository.CarrierRepository;
 import com.xplaza.backend.fulfillment.domain.repository.ReturnRepository;
 import com.xplaza.backend.fulfillment.domain.repository.ShipmentRepository;
+import com.xplaza.backend.notification.domain.entity.Notification;
+import com.xplaza.backend.notification.service.NotificationService;
+import com.xplaza.backend.order.domain.entity.CustomerOrder;
+import com.xplaza.backend.order.service.CustomerOrderService;
 
 /**
  * Service for shipment and return operations.
@@ -38,13 +42,15 @@ public class FulfillmentService {
   private final ShipmentRepository shipmentRepository;
   private final ReturnRepository returnRepository;
   private final CarrierRepository carrierRepository;
+  private final NotificationService notificationService;
+  private final CustomerOrderService customerOrderService;
 
   // Shipment operations
 
   /**
    * Create a shipment for an order.
    */
-  public Shipment createShipment(Long orderId, Long warehouseId, Long carrierId,
+  public Shipment createShipment(UUID orderId, Long warehouseId, Long carrierId,
       Shipment.ShippingMethod method, String recipientName, String recipientPhone,
       String addressLine1, String addressLine2, String city, String state,
       String postalCode, String countryCode) {
@@ -74,7 +80,7 @@ public class FulfillmentService {
   /**
    * Add item to shipment.
    */
-  public void addShipmentItem(UUID shipmentId, Long orderItemId, Long productId,
+  public void addShipmentItem(UUID shipmentId, UUID orderItemId, Long productId,
       UUID variantId, String sku, String productName, int quantity) {
     Shipment shipment = shipmentRepository.findById(shipmentId)
         .orElseThrow(() -> new IllegalArgumentException("Shipment not found: " + shipmentId));
@@ -111,9 +117,25 @@ public class FulfillmentService {
         .build();
     shipment.addTrackingEvent(event);
 
-    shipment = shipmentRepository.save(shipment);
+    Shipment savedShipment = shipmentRepository.save(shipment);
     log.info("Marked shipment as shipped: {} tracking={}", shipmentId, trackingNumber);
-    return shipment;
+
+    // Send notification
+    try {
+      CustomerOrder order = customerOrderService.getOrder(savedShipment.getOrderId())
+          .orElseThrow(() -> new IllegalArgumentException("Order not found: " + savedShipment.getOrderId()));
+
+      notificationService.createOrderNotification(
+          order.getCustomerId(),
+          Notification.NotificationType.ORDER_SHIPPED,
+          "Order Shipped",
+          "Your order " + order.getOrderNumber() + " has been shipped. Tracking: " + trackingNumber,
+          order.getOrderId().toString());
+    } catch (Exception e) {
+      log.error("Failed to send shipment notification: {}", e.getMessage());
+    }
+
+    return savedShipment;
   }
 
   /**
@@ -156,16 +178,32 @@ public class FulfillmentService {
         .build();
     shipment.addTrackingEvent(event);
 
-    shipment = shipmentRepository.save(shipment);
+    Shipment savedShipment = shipmentRepository.save(shipment);
     log.info("Marked shipment as delivered: {}", shipmentId);
-    return shipment;
+
+    // Send notification
+    try {
+      CustomerOrder order = customerOrderService.getOrder(savedShipment.getOrderId())
+          .orElseThrow(() -> new IllegalArgumentException("Order not found: " + savedShipment.getOrderId()));
+
+      notificationService.createOrderNotification(
+          order.getCustomerId(),
+          Notification.NotificationType.ORDER_DELIVERED,
+          "Order Delivered",
+          "Your order " + order.getOrderNumber() + " has been delivered.",
+          order.getOrderId().toString());
+    } catch (Exception e) {
+      log.error("Failed to send delivery notification: {}", e.getMessage());
+    }
+
+    return savedShipment;
   }
 
   /**
    * Get shipments for an order.
    */
   @Transactional(readOnly = true)
-  public List<Shipment> getOrderShipments(Long orderId) {
+  public List<Shipment> getOrderShipments(UUID orderId) {
     return shipmentRepository.findByOrderId(orderId);
   }
 
@@ -198,7 +236,7 @@ public class FulfillmentService {
   /**
    * Create a return request.
    */
-  public Return createReturnRequest(Long orderId, Long customerId, Return.ReturnReason reason,
+  public Return createReturnRequest(UUID orderId, Long customerId, Return.ReturnReason reason,
       String reasonDetail, Return.ReturnType type) {
     Return returnRequest = Return.builder()
         .orderId(orderId)
@@ -300,7 +338,7 @@ public class FulfillmentService {
    * Get returns for an order.
    */
   @Transactional(readOnly = true)
-  public List<Return> getOrderReturns(Long orderId) {
+  public List<Return> getOrderReturns(UUID orderId) {
     return returnRepository.findByOrderId(orderId);
   }
 

@@ -185,7 +185,7 @@ public class ReviewController {
   public record CreateReviewRequest(
       Long productId,
       Long customerId,
-      Long orderId,
+      UUID orderId,
       Long shopId,
       String title,
       String body,

@@ -4,13 +4,15 @@
  */
 package com.xplaza.backend.order.dto.response;
 
+import java.util.UUID;
+
 import lombok.Data;
 
 @Data
 public class OrderItemResponse {
-  private Long id;
+  private UUID id;
   private Long productId;
-  private Long orderId;
+  private UUID orderId;
   private Long quantity;
   // add other fields as needed
 }

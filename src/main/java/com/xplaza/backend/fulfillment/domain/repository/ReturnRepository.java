@@ -23,7 +23,7 @@ import com.xplaza.backend.fulfillment.domain.entity.Return;
 @Repository
 public interface ReturnRepository extends JpaRepository<Return, UUID> {
 
-  List<Return> findByOrderId(Long orderId);
+  List<Return> findByOrderId(UUID orderId);
 
   Optional<Return> findByRmaNumber(String rmaNumber);
 
@@ -42,7 +42,7 @@ public interface ReturnRepository extends JpaRepository<Return, UUID> {
   List<Return> findReceivedAwaitingInspection();
 
   @Query("SELECT COUNT(r) FROM Return r WHERE r.orderId = :orderId AND r.status NOT IN ('CANCELLED', 'REJECTED')")
-  long countActiveReturnsByOrderId(@Param("orderId") Long orderId);
+  long countActiveReturnsByOrderId(@Param("orderId") UUID orderId);
 
   @Query("SELECT r FROM Return r LEFT JOIN FETCH r.items WHERE r.returnId = :returnId")
   Optional<Return> findByIdWithItems(@Param("returnId") UUID returnId);

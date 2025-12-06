@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.xplaza.backend.cart.domain.entity.Cart;
 import com.xplaza.backend.cart.domain.repository.CartRepository;
+import com.xplaza.backend.marketing.service.CampaignService;
 import com.xplaza.backend.order.domain.entity.CheckoutSession;
 import com.xplaza.backend.order.domain.entity.CustomerOrder;
 import com.xplaza.backend.order.domain.repository.CheckoutSessionRepository;
@@ -35,6 +36,7 @@ public class CheckoutService {
   private final CheckoutSessionRepository checkoutSessionRepository;
   private final CartRepository cartRepository;
   private final CustomerOrderService customerOrderService;
+  private final CampaignService campaignService;
 
   /**
    * Start a new checkout session for a cart.
@@ -146,9 +148,19 @@ public class CheckoutService {
   /**
    * Apply coupon to checkout.
    */
-  public CheckoutSession applyCoupon(UUID checkoutId, Long couponId, String couponCode, BigDecimal discountAmount) {
+  public CheckoutSession applyCoupon(UUID checkoutId, String couponCode) {
     CheckoutSession checkout = getActiveCheckout(checkoutId);
-    checkout.setCouponId(couponId);
+
+    // Validate coupon and calculate discount
+    long usageCount = customerOrderService.countOrdersByCouponCode(couponCode);
+    BigDecimal discountAmount = campaignService.validateCoupon(couponCode, checkout.getSubtotal(), (int) usageCount);
+
+    // Get campaign ID
+    Long campaignId = campaignService.getCampaignByCode(couponCode)
+        .map(c -> c.getCampaignId())
+        .orElseThrow(() -> new IllegalArgumentException("Campaign not found: " + couponCode));
+
+    checkout.setCouponId(campaignId);
     checkout.setCouponCode(couponCode);
     checkout.setCouponDiscountAmount(discountAmount);
     checkout.setDiscountAmount(checkout.getDiscountAmount().add(discountAmount));
@@ -193,6 +205,15 @@ public class CheckoutService {
 
     // Create the order
     CustomerOrder order = customerOrderService.createOrderFromCheckout(checkout);
+
+    // Record campaign usage if coupon was applied
+    if (checkout.getCouponCode() != null) {
+      try {
+        campaignService.recordUsage(checkout.getCouponCode());
+      } catch (Exception e) {
+        log.error("Failed to record campaign usage for order {}: {}", order.getOrderNumber(), e.getMessage());
+      }
+    }
 
     // Mark checkout as completed
     checkout.complete(order.getOrderId());

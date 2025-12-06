@@ -23,6 +23,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.xplaza.backend.auth.domain.entity.AdminUser;
+import com.xplaza.backend.customer.domain.entity.Customer;
+
 @Component
 public class JwtUtil {
   public static final String ROLE = "role";
@@ -77,11 +80,29 @@ public class JwtUtil {
     return username.equals(adminUser.getUsername());
   }
 
-  public String generateJwtToken(UserDetails adminUser) {
+  public String generateJwtToken(UserDetails userDetails) {
     Map<String, Object> claims = new HashMap<>();
-    claims.put(ROLE, "ADMIN");
+    if (userDetails instanceof AdminUser) {
+      claims.put(ROLE, "ADMIN");
+      claims.put("userId", ((AdminUser) userDetails).getId());
+    } else if (userDetails instanceof Customer) {
+      claims.put(ROLE, "CUSTOMER");
+      claims.put("userId", ((Customer) userDetails).getCustomerId());
+    }
     claims.put(TOKEN_TYPE, true);
-    return createJwtToken(claims, adminUser.getUsername());
+    return createJwtToken(claims, userDetails.getUsername());
+  }
+
+  public String generateRefreshToken(UserDetails userDetails) {
+    Map<String, Object> claims = new HashMap<>();
+    claims.put(TOKEN_TYPE, false);
+    return Jwts.builder()
+        .claims(claims)
+        .subject(userDetails.getUsername())
+        .issuedAt(new Date(System.currentTimeMillis()))
+        .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION_MS))
+        .signWith(SECRET_KEY)
+        .compact();
   }
 
   private String createJwtToken(Map<String, Object> claims, String subject) {
@@ -110,23 +131,6 @@ public class JwtUtil {
   public String extractRole(String token) {
     Claims claims = extractAllClaims(token);
     return claims.get(ROLE, String.class);
-  }
-
-  public String generateRefreshToken(UserDetails adminUser) {
-    Map<String, Object> claims = new HashMap<>();
-    claims.put(ROLE, "ADMIN");
-    claims.put(TOKEN_TYPE, false);
-    return createRefreshToken(claims, adminUser.getUsername());
-  }
-
-  private String createRefreshToken(Map<String, Object> claims, String subject) {
-    return Jwts.builder()
-        .claims(claims)
-        .subject(subject)
-        .issuedAt(new Date(System.currentTimeMillis()))
-        .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION_MS))
-        .signWith(SECRET_KEY)
-        .compact();
   }
 
   public static String extractJwtToken(HttpServletRequest request) {

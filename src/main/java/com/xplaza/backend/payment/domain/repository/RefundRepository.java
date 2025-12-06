@@ -23,7 +23,7 @@ import com.xplaza.backend.payment.domain.entity.Refund;
 @Repository
 public interface RefundRepository extends JpaRepository<Refund, UUID> {
 
-  List<Refund> findByOrderId(Long orderId);
+  List<Refund> findByOrderId(UUID orderId);
 
   Optional<Refund> findByGatewayRefundId(String gatewayRefundId);
 
@@ -37,8 +37,8 @@ public interface RefundRepository extends JpaRepository<Refund, UUID> {
   Page<Refund> findByRequestedBy(@Param("customerId") Long customerId, Pageable pageable);
 
   @Query("SELECT SUM(r.totalAmount) FROM Refund r WHERE r.orderId = :orderId AND r.status = 'COMPLETED'")
-  java.math.BigDecimal sumCompletedRefundsByOrderId(@Param("orderId") Long orderId);
+  java.math.BigDecimal sumCompletedRefundsByOrderId(@Param("orderId") UUID orderId);
 
   @Query("SELECT COUNT(r) FROM Refund r WHERE r.orderId = :orderId AND r.status NOT IN ('REJECTED')")
-  long countActiveRefundsByOrderId(@Param("orderId") Long orderId);
+  long countActiveRefundsByOrderId(@Param("orderId") UUID orderId);
 }

@@ -70,14 +70,21 @@ public class InventoryService {
   /**
    * Reserve stock for an order.
    */
-  public StockReservation reserveStock(UUID variantId, Long warehouseId, int quantity,
-      Long orderId, UUID cartId) {
-    InventoryItem item = inventoryRepository.findByVariantIdAndWarehouseId(variantId, warehouseId)
-        .orElseThrow(() -> new IllegalArgumentException(
-            "Inventory not found for variant: " + variantId + " at warehouse: " + warehouseId));
+  public StockReservation reserveStock(Long productId, UUID variantId, Long warehouseId, int quantity,
+      UUID orderId, UUID cartId) {
+    InventoryItem item;
+    if (variantId != null) {
+      item = inventoryRepository.findByVariantIdAndWarehouseId(variantId, warehouseId)
+          .orElseThrow(() -> new IllegalArgumentException(
+              "Inventory not found for variant: " + variantId + " at warehouse: " + warehouseId));
+    } else {
+      item = inventoryRepository.findByProductIdAndWarehouseId(productId, warehouseId)
+          .orElseThrow(() -> new IllegalArgumentException(
+              "Inventory not found for product: " + productId + " at warehouse: " + warehouseId));
+    }
 
     if (!item.reserve(quantity)) {
-      throw new IllegalStateException("Insufficient stock for variant: " + variantId);
+      throw new IllegalStateException("Insufficient stock for product: " + productId);
     }
 
     StockReservation reservation = StockReservation.builder()
@@ -91,8 +98,28 @@ public class InventoryService {
     item.getReservations().add(reservation);
     inventoryRepository.save(item);
 
-    log.info("Reserved {} units of variant {} at warehouse {}", quantity, variantId, warehouseId);
+    log.info("Reserved {} units of product {} at warehouse {}", quantity, productId, warehouseId);
     return reservation;
+  }
+
+  /**
+   * Reserve stock from any available warehouse.
+   */
+  public StockReservation reserveStockAnyWarehouse(Long productId, UUID variantId, int quantity, UUID orderId) {
+    List<InventoryItem> items;
+    if (variantId != null) {
+      items = inventoryRepository.findByVariantId(variantId);
+    } else {
+      items = inventoryRepository.findByProductId(productId);
+    }
+
+    for (InventoryItem item : items) {
+      if (item.getAvailableQuantity() >= quantity) {
+        return reserveStock(productId, variantId, item.getWarehouse().getWarehouseId(), quantity, orderId, null);
+      }
+    }
+
+    throw new IllegalStateException("Insufficient stock for product: " + productId);
   }
 
   /**
