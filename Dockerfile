@@ -1,5 +1,5 @@
-# Use the official Maven image with SAP Machine 24
-FROM maven:3-sapmachine-24
+# Use the official Maven image with SAP Machine 25
+FROM maven:3-sapmachine-25
 
 # Set the working directory inside the container
 WORKDIR /app
