@@ -19,6 +19,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.xplaza.backend.dashboard.dto.RevenueData;
+import com.xplaza.backend.dashboard.dto.TopCustomer;
 import com.xplaza.backend.order.domain.entity.CustomerOrder;
 
 /**
@@ -46,6 +48,8 @@ public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, UU
   List<CustomerOrder> findByStatus(CustomerOrder.OrderStatus status);
 
   Page<CustomerOrder> findByStatus(CustomerOrder.OrderStatus status, Pageable pageable);
+
+  long countByCouponCode(String couponCode);
 
   @Query("SELECT o FROM CustomerOrder o WHERE o.customerId = :customerId AND o.status = :status")
   List<CustomerOrder> findByCustomerIdAndStatus(
@@ -110,4 +114,40 @@ public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, UU
 
   @Query(value = "SELECT nextval('order_number_seq')", nativeQuery = true)
   Long getNextOrderSequence();
+
+  @Query("SELECT COUNT(o) FROM CustomerOrder o WHERE o.status = :status")
+  long countByStatus(@Param("status") CustomerOrder.OrderStatus status);
+
+  @Query("SELECT COUNT(o) FROM CustomerOrder o WHERE o.status IN :statuses")
+  long countByStatusIn(@Param("statuses") List<CustomerOrder.OrderStatus> statuses);
+
+  @Query("SELECT SUM(o.grandTotal) FROM CustomerOrder o WHERE o.status IN :statuses AND o.createdAt BETWEEN :start AND :end")
+  BigDecimal sumGrandTotalByStatusInAndCreatedAtBetween(
+      @Param("statuses") List<CustomerOrder.OrderStatus> statuses,
+      @Param("start") Instant start,
+      @Param("end") Instant end);
+
+  @Query("SELECT COUNT(o) FROM CustomerOrder o WHERE o.createdAt BETWEEN :start AND :end")
+  long countByCreatedAtBetween(@Param("start") Instant start, @Param("end") Instant end);
+
+  @Query("SELECT new com.xplaza.backend.dashboard.dto.TopCustomer(o.customerId, CONCAT(o.shippingFirstName, ' ', o.shippingLastName), COUNT(o), SUM(o.grandTotal)) "
+      +
+      "FROM CustomerOrder o " +
+      "GROUP BY o.customerId, o.shippingFirstName, o.shippingLastName " +
+      "ORDER BY SUM(o.grandTotal) DESC")
+  List<TopCustomer> findTopCustomers(Pageable pageable);
+
+  @Query("SELECT new com.xplaza.backend.dashboard.dto.RevenueData(CAST(o.createdAt AS LocalDate), SUM(o.grandTotal), COUNT(o)) "
+      +
+      "FROM CustomerOrder o " +
+      "WHERE o.createdAt >= :start " +
+      "GROUP BY CAST(o.createdAt AS LocalDate) " +
+      "ORDER BY CAST(o.createdAt AS LocalDate) ASC")
+  List<RevenueData> findRevenueData(@Param("start") Instant start);
+
+  @Query("SELECT COUNT(DISTINCT o.customerId) FROM CustomerOrder o")
+  long countDistinctCustomers();
+
+  @Query("SELECT COUNT(DISTINCT o.customerId) FROM CustomerOrder o WHERE o.createdAt >= :start")
+  long countDistinctCustomersSince(@Param("start") Instant start);
 }

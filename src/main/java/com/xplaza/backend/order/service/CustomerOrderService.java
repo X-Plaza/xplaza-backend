@@ -24,11 +24,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.xplaza.backend.cart.domain.entity.Cart;
 import com.xplaza.backend.cart.domain.entity.CartItem;
 import com.xplaza.backend.cart.domain.repository.CartRepository;
+import com.xplaza.backend.inventory.service.InventoryService;
+import com.xplaza.backend.notification.domain.entity.Notification;
+import com.xplaza.backend.notification.service.NotificationService;
 import com.xplaza.backend.order.domain.entity.CheckoutSession;
 import com.xplaza.backend.order.domain.entity.CustomerOrder;
 import com.xplaza.backend.order.domain.entity.CustomerOrderItem;
 import com.xplaza.backend.order.domain.repository.CustomerOrderItemRepository;
 import com.xplaza.backend.order.domain.repository.CustomerOrderRepository;
+import com.xplaza.backend.payment.domain.entity.Refund;
+import com.xplaza.backend.payment.service.PaymentService;
 
 /**
  * Service for customer order operations with UUID-based orders.
@@ -42,6 +47,9 @@ public class CustomerOrderService {
   private final CustomerOrderRepository orderRepository;
   private final CustomerOrderItemRepository orderItemRepository;
   private final CartRepository cartRepository;
+  private final PaymentService paymentService;
+  private final NotificationService notificationService;
+  private final InventoryService inventoryService;
 
   private static final DateTimeFormatter ORDER_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
   private static final Random RANDOM = new Random();
@@ -95,6 +103,10 @@ public class CustomerOrderService {
 
     // Copy cart items to order items
     for (CartItem cartItem : cart.getActiveItems()) {
+      // Reserve stock
+      inventoryService.reserveStockAnyWarehouse(cartItem.getProductId(), cartItem.getVariantId(),
+          cartItem.getQuantity(), order.getOrderId());
+
       CustomerOrderItem orderItem = CustomerOrderItem.builder()
           .order(order)
           .productId(cartItem.getProductId())
@@ -120,6 +132,18 @@ public class CustomerOrderService {
     cartRepository.save(cart);
 
     log.info("Created order {} from cart {}", savedOrder.getOrderNumber(), cart.getId());
+
+    // Send notification
+    try {
+      notificationService.createOrderNotification(
+          savedOrder.getCustomerId(),
+          Notification.NotificationType.ORDER_PLACED,
+          "Order Placed",
+          "Your order " + savedOrder.getOrderNumber() + " has been placed successfully.",
+          savedOrder.getOrderId().toString());
+    } catch (Exception e) {
+      log.error("Failed to send order notification: {}", e.getMessage());
+    }
 
     return savedOrder;
   }
@@ -194,6 +218,11 @@ public class CustomerOrderService {
   @Transactional(readOnly = true)
   public List<CustomerOrder> getOrdersByStatus(CustomerOrder.OrderStatus status) {
     return orderRepository.findByStatus(status);
+  }
+
+  @Transactional(readOnly = true)
+  public long countOrdersByCouponCode(String couponCode) {
+    return orderRepository.countByCouponCode(couponCode);
   }
 
   /**
@@ -312,7 +341,18 @@ public class CustomerOrderService {
     CustomerOrder saved = orderRepository.save(order);
     log.info("Cancelled order: {} - Reason: {}", order.getOrderNumber(), reason);
 
-    // TODO: Trigger refund if payment was made
+    // Trigger refund if payment was made
+    if ("PAID".equals(order.getPaymentStatus())) {
+      paymentService.createRefundRequest(
+          orderId,
+          order.getGrandTotal(),
+          order.getCurrency(),
+          Refund.RefundReason.OTHER,
+          "Order cancelled: " + reason,
+          -1L, // System/Admin
+          Refund.RequesterType.ADMIN);
+      log.info("Initiated refund for cancelled order: {}", order.getOrderNumber());
+    }
 
     return saved;
   }

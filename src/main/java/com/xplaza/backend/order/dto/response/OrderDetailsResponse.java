@@ -4,11 +4,13 @@
  */
 package com.xplaza.backend.order.dto.response;
 
+import java.util.UUID;
+
 import lombok.Data;
 
 @Data
 public class OrderDetailsResponse {
-  private Long orderId;
+  private UUID orderId;
   private String invoiceNumber;
   private Double totalPrice;
   private Double discountAmount;

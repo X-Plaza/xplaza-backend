@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-Plaza Notification</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            color: #202124;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #dadce0;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #ffffff;
+            padding: 24px 24px 0 24px;
+            text-align: left;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 400;
+            color: #5f6368;
+            display: flex;
+            align-items: center;
+        }
+        .logo-text {
+            color: #1a73e8;
+            font-weight: 500;
+        }
+        .content {
+            padding: 24px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+        .content h2 {
+            color: #202124;
+            margin-top: 0;
+            font-size: 18px;
+            font-weight: 400;
+            margin-bottom: 16px;
+        }
+        .content p {
+            margin-bottom: 16px;
+            color: #3c4043;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 24px;
+            text-align: center;
+            font-size: 12px;
+            color: #5f6368;
+            border-top: 1px solid #dadce0;
+        }
+        .button {
+            display: inline-block;
+            background-color: #1a73e8;
+            color: #ffffff;
+            padding: 10px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 16px;
+            font-weight: 500;
+            font-size: 14px;
+            letter-spacing: 0.25px;
+        }
+        .button:hover {
+            background-color: #1765cc;
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+        }
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 100%;
+                margin: 0;
+                border: none;
+                border-radius: 0;
+            }
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><span class="logo-text">X-Plaza</span></h1>
+        </div>
+        <div class="content">
+            <h2 th:text="${title}">Notification Title</h2>
+            <p th:text="${message}">Notification message goes here.</p>
+            
+            <!-- Optional Action Button -->
+            <div th:if="${actionUrl != null}">
+                <a th:href="${actionUrl}" class="button" th:text="${actionText}">View Details</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>&copy; 2025 X-Plaza. All rights reserved.</p>
+            <p>You received this email because you are a registered customer of X-Plaza.</p>
+        </div>
+    </div>
+</body>
+</html>

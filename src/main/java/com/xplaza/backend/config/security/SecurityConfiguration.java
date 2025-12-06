@@ -49,7 +49,13 @@ public class SecurityConfiguration {
         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/actuator/health", "/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**")
+            .requestMatchers(
+                "/actuator/health",
+                "/api/v1/auth/**",
+                "/api/v1/customer/auth/**",
+                "/api/v1/webhooks/**",
+                "/v3/api-docs/**",
+                "/swagger-ui/**")
             .permitAll()
             .anyRequest().authenticated())
         .addFilterBefore(filterApiRequest, UsernamePasswordAuthenticationFilter.class)

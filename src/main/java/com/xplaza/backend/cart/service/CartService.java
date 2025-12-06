@@ -21,6 +21,11 @@ import com.xplaza.backend.cart.domain.entity.Cart.CartStatus;
 import com.xplaza.backend.cart.domain.entity.CartItem;
 import com.xplaza.backend.cart.domain.repository.CartItemRepository;
 import com.xplaza.backend.cart.domain.repository.CartRepository;
+import com.xplaza.backend.catalog.domain.entity.Product;
+import com.xplaza.backend.catalog.domain.repository.ProductRepository;
+import com.xplaza.backend.catalog.domain.repository.ProductVariantRepository;
+import com.xplaza.backend.inventory.service.InventoryService;
+import com.xplaza.backend.promotion.service.ProductDiscountService;
 
 /**
  * Service for shopping cart operations.
@@ -32,6 +37,10 @@ public class CartService {
 
   private final CartRepository cartRepository;
   private final CartItemRepository cartItemRepository;
+  private final ProductRepository productRepository;
+  private final ProductVariantRepository productVariantRepository;
+  private final InventoryService inventoryService;
+  private final ProductDiscountService productDiscountService;
 
   /** Default cart expiration in days */
   private static final int DEFAULT_CART_EXPIRATION_DAYS = 30;
@@ -106,9 +115,35 @@ public class CartService {
       throw new IllegalStateException("Cannot add items to inactive cart");
     }
 
+    // Validate product and price from DB
+    Product product = productRepository.findById(productId)
+        .orElseThrow(() -> new IllegalArgumentException("Product not found: " + productId));
+
+    // Use price from DB to prevent tampering, applying any active discounts
+    BigDecimal actualPrice = productDiscountService.calculateDiscountedPrice(product);
+
+    if (variantId != null) {
+      actualPrice = productVariantRepository.findById(variantId)
+          .map(v -> v.getPrice())
+          .orElseThrow(() -> new IllegalArgumentException("Variant not found: " + variantId));
+    }
+
+    // Check inventory
+    int availableStock = variantId != null
+        ? inventoryService.getAvailableQuantityByVariant(variantId)
+        : inventoryService.getAvailableQuantity(productId);
+
+    if (availableStock < quantity) {
+      throw new IllegalStateException("Insufficient stock. Available: " + availableStock);
+    }
+
     // Check if item already exists
     CartItem existingItem = cart.findItem(productId, variantId);
     if (existingItem != null && existingItem.isActive()) {
+      int newTotal = existingItem.getQuantity() + quantity;
+      if (availableStock < newTotal) {
+        throw new IllegalStateException("Insufficient stock for total quantity. Available: " + availableStock);
+      }
       existingItem.incrementQuantity(quantity);
       return cartItemRepository.save(existingItem);
     }
@@ -118,19 +153,20 @@ public class CartService {
         .cart(cart)
         .productId(productId)
         .variantId(variantId)
-        .shopId(shopId)
+        .shopId(product.getShop().getShopId()) // Use shop from product
         .quantity(quantity)
-        .unitPrice(unitPrice)
-        .productName(productName)
+        .unitPrice(actualPrice)
+        .productName(product.getProductName())
         .variantName(variantName)
-        .sku(sku)
-        .imageUrl(imageUrl)
+        .sku("SKU-" + productId) // Placeholder as Product entity lacks SKU
+        .imageUrl(product.getImages() != null && !product.getImages().isEmpty()
+            ? product.getImages().get(0).getProductImagePath()
+            : null)
         .build();
 
     cart.addCartItem(item);
-    cartRepository.save(cart);
-
-    return item;
+    // Save item directly to ensure ID is generated and returned
+    return cartItemRepository.save(item);
   }
 
   /**

@@ -131,7 +131,7 @@ public class InventoryItem {
   @Builder.Default
   private List<InventoryMovement> movements = new ArrayList<>();
 
-  @OneToMany(mappedBy = "inventoryItem", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "inventoryItem", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @Builder.Default
   private List<StockReservation> reservations = new ArrayList<>();
 

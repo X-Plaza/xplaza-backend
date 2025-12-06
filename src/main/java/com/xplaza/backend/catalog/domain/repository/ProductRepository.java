@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,9 +22,18 @@ import com.xplaza.backend.catalog.domain.entity.Product;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+  @Override
+  @EntityGraph(attributePaths = { "brand", "category", "productVariationType", "currency", "shop", "images" })
+  List<Product> findAll();
+
+  @Override
+  @EntityGraph(attributePaths = { "brand", "category", "productVariationType", "currency", "shop", "images" })
+  Optional<Product> findById(Long id);
+
   @Query("SELECT p.productName FROM Product p WHERE p.productId = :id")
   String getName(@Param("id") Long id);
 
+  @EntityGraph(attributePaths = { "brand", "category", "productVariationType", "currency", "shop", "images" })
   Optional<Product> findByProductId(Long productId);
 
   default Product findProductById(Long productId) {
@@ -97,6 +107,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
   default List<Product> findByShopIdAndCategoryId(Long shopId, Long categoryId) {
     return findByShopShopIdAndCategoryCategoryId(shopId, categoryId);
   }
+
+  long countByQuantityLessThanEqual(int quantity);
 
   @Query("SELECT p FROM Product p WHERE p.shop.shopId = :shopId")
   List<Product> findTrendingByShopId(@Param("shopId") Long shopId);

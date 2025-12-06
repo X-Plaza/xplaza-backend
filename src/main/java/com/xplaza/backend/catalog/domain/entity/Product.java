@@ -28,15 +28,15 @@ public class Product {
 
   private String productDescription;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "fk_brand_id")
   private Brand brand;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "fk_category_id")
   private Category category;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "fk_product_var_type_id")
   private ProductVariationType productVariationType;
 
@@ -46,11 +46,11 @@ public class Product {
 
   private Double productSellingPrice;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "fk_currency_id")
   private Currency currency;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "fk_shop_id")
   private Shop shop;
 

@@ -24,16 +24,16 @@ import com.xplaza.backend.payment.domain.entity.PaymentTransaction;
 @Repository
 public interface PaymentTransactionRepository extends JpaRepository<PaymentTransaction, UUID> {
 
-  List<PaymentTransaction> findByOrderId(Long orderId);
+  List<PaymentTransaction> findByOrderId(UUID orderId);
 
   Optional<PaymentTransaction> findByGatewayTransactionId(String gatewayTransactionId);
 
   @Query("SELECT pt FROM PaymentTransaction pt WHERE pt.orderId = :orderId AND pt.type = :type ORDER BY pt.createdAt DESC")
-  List<PaymentTransaction> findByOrderIdAndType(@Param("orderId") Long orderId,
+  List<PaymentTransaction> findByOrderIdAndType(@Param("orderId") UUID orderId,
       @Param("type") PaymentTransaction.TransactionType type);
 
   @Query("SELECT pt FROM PaymentTransaction pt WHERE pt.orderId = :orderId AND pt.status = 'SUCCESS' AND pt.type = 'SALE' ORDER BY pt.createdAt DESC")
-  Optional<PaymentTransaction> findCompletedSaleByOrderId(@Param("orderId") Long orderId);
+  Optional<PaymentTransaction> findCompletedSaleByOrderId(@Param("orderId") UUID orderId);
 
   @Query("SELECT pt FROM PaymentTransaction pt WHERE pt.status = 'PENDING' AND pt.createdAt < :cutoff")
   List<PaymentTransaction> findStalePendingTransactions(@Param("cutoff") Instant cutoff);
@@ -42,10 +42,10 @@ public interface PaymentTransactionRepository extends JpaRepository<PaymentTrans
   Page<PaymentTransaction> findByCustomerId(@Param("customerId") Long customerId, Pageable pageable);
 
   @Query("SELECT SUM(pt.amount) FROM PaymentTransaction pt WHERE pt.orderId = :orderId AND pt.status = 'SUCCESS' AND pt.type = 'SALE'")
-  java.math.BigDecimal sumCompletedAmountByOrderId(@Param("orderId") Long orderId);
+  java.math.BigDecimal sumCompletedAmountByOrderId(@Param("orderId") UUID orderId);
 
   @Query("SELECT SUM(pt.amount) FROM PaymentTransaction pt WHERE pt.orderId = :orderId AND pt.status = 'SUCCESS' AND pt.type = 'REFUND'")
-  java.math.BigDecimal sumRefundedAmountByOrderId(@Param("orderId") Long orderId);
+  java.math.BigDecimal sumRefundedAmountByOrderId(@Param("orderId") UUID orderId);
 
   @Query("SELECT pt FROM PaymentTransaction pt WHERE pt.status = 'PENDING' AND pt.type = 'AUTHORIZATION' AND pt.createdAt < :expiry")
   List<PaymentTransaction> findExpiredAuthorizations(@Param("expiry") Instant expiry);

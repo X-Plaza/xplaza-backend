@@ -34,7 +34,7 @@ public class Refund {
   private UUID refundId = UUID.randomUUID();
 
   @Column(name = "order_id", nullable = false)
-  private Long orderId;
+  private UUID orderId;
 
   /**
    * Original payment transaction being refunded.

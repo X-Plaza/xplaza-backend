@@ -28,7 +28,7 @@ import com.xplaza.backend.review.service.ReviewService.ProductRatingSummary;
  * REST controller for product review operations.
  */
 @RestController
-@RequestMapping("/api/v2/reviews")
+@RequestMapping("/api/v1/reviews")
 @RequiredArgsConstructor
 @Tag(name = "Reviews", description = "Product review management")
 public class ReviewController {
@@ -185,7 +185,7 @@ public class ReviewController {
   public record CreateReviewRequest(
       Long productId,
       Long customerId,
-      Long orderId,
+      UUID orderId,
       Long shopId,
       String title,
       String body,

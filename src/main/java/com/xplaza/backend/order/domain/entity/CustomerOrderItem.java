@@ -39,6 +39,7 @@ public class CustomerOrderItem {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "order_id", nullable = false)
+  @com.fasterxml.jackson.annotation.JsonIgnore
   private CustomerOrder order;
 
   @Column(name = "product_id", nullable = false)

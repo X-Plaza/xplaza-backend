@@ -129,7 +129,7 @@ public class InventoryMovement {
   /**
    * Create a ship movement.
    */
-  public static InventoryMovement createShip(InventoryItem item, int quantity, Long orderId, Long userId) {
+  public static InventoryMovement createShip(InventoryItem item, int quantity, UUID orderId, Long userId) {
     int before = item.getQuantityOnHand();
     return InventoryMovement.builder()
         .inventoryItem(item)

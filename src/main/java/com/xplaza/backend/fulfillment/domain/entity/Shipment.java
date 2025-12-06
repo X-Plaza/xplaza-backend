@@ -38,7 +38,7 @@ public class Shipment {
   private UUID shipmentId = UUID.randomUUID();
 
   @Column(name = "order_id", nullable = false)
-  private Long orderId;
+  private UUID orderId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "carrier_id")

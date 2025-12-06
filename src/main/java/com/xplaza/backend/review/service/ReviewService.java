@@ -16,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.order.domain.entity.CustomerOrder;
+import com.xplaza.backend.order.service.CustomerOrderService;
 import com.xplaza.backend.review.domain.entity.Review;
 import com.xplaza.backend.review.domain.entity.ReviewImage;
 import com.xplaza.backend.review.domain.entity.ReviewResponse;
@@ -32,16 +34,33 @@ import com.xplaza.backend.review.domain.repository.ReviewRepository;
 public class ReviewService {
 
   private final ReviewRepository reviewRepository;
+  private final CustomerOrderService customerOrderService;
 
   /**
    * Create a new review.
    */
-  public Review createReview(Long productId, Long customerId, Long orderId, Long shopId,
+  public Review createReview(Long productId, Long customerId, UUID orderId, Long shopId,
       String title, String body, Integer ratingOverall,
       Integer ratingQuality, Integer ratingValue, Integer ratingShipping) {
     // Check if customer already reviewed this product
     if (reviewRepository.existsByProductIdAndCustomerId(productId, customerId)) {
       throw new IllegalStateException("Customer has already reviewed this product");
+    }
+
+    if (orderId != null) {
+      CustomerOrder order = customerOrderService.getOrder(orderId)
+          .orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderId));
+
+      if (!order.getCustomerId().equals(customerId)) {
+        throw new IllegalArgumentException("Order does not belong to customer");
+      }
+
+      boolean hasProduct = order.getItems().stream()
+          .anyMatch(item -> item.getProductId().equals(productId));
+
+      if (!hasProduct) {
+        throw new IllegalArgumentException("Product not found in order");
+      }
     }
 
     Review review = Review.builder()

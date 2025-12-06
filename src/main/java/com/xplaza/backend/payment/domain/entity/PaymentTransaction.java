@@ -34,7 +34,7 @@ public class PaymentTransaction {
   private UUID transactionId = UUID.randomUUID();
 
   @Column(name = "order_id")
-  private Long orderId;
+  private UUID orderId;
 
   @Column(name = "customer_id")
   private Long customerId;

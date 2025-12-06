@@ -29,6 +29,41 @@ import com.xplaza.backend.common.util.ApiResponse;
 public class GlobalExceptionHandler {
 
   /**
+   * Handle resource already exists (409)
+   */
+  @ExceptionHandler(ResourceAlreadyExistsException.class)
+  public ResponseEntity<ApiResponse<Void>> handleResourceAlreadyExists(ResourceAlreadyExistsException ex) {
+    log.warn("Resource already exists: {}", ex.getMessage());
+    return ResponseEntity
+        .status(HttpStatus.CONFLICT)
+        .body(ApiResponse.error("RESOURCE_ALREADY_EXISTS", ex.getMessage()));
+  }
+
+  /**
+   * Handle bad credentials (401)
+   */
+  @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+  public ResponseEntity<ApiResponse<Void>> handleBadCredentials(
+      org.springframework.security.authentication.BadCredentialsException ex) {
+    log.warn("Bad credentials: {}", ex.getMessage());
+    return ResponseEntity
+        .status(HttpStatus.UNAUTHORIZED)
+        .body(ApiResponse.error("BAD_CREDENTIALS", "Invalid username or password"));
+  }
+
+  /**
+   * Handle illegal state (400) - e.g. Insufficient stock if not using specific
+   * exception
+   */
+  @ExceptionHandler(IllegalStateException.class)
+  public ResponseEntity<ApiResponse<Void>> handleIllegalState(IllegalStateException ex) {
+    log.warn("Illegal state: {}", ex.getMessage());
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(ApiResponse.error("ILLEGAL_STATE", ex.getMessage()));
+  }
+
+  /**
    * Handle resource not found (404)
    */
   @ExceptionHandler(ResourceNotFoundException.class)

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,6 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.notification.domain.entity.Notification;
+import com.xplaza.backend.notification.service.NotificationService;
 import com.xplaza.backend.payment.domain.entity.PaymentTransaction;
 import com.xplaza.backend.payment.domain.entity.Refund;
 import com.xplaza.backend.payment.domain.repository.PaymentTransactionRepository;
@@ -35,11 +38,26 @@ public class PaymentService {
 
   private final PaymentTransactionRepository transactionRepository;
   private final RefundRepository refundRepository;
+  private final NotificationService notificationService;
+  private final PaymentGateway paymentGateway;
+
+  /**
+   * Create a Stripe PaymentIntent.
+   */
+  public String createPaymentIntent(BigDecimal amount, String currency, String description,
+      Map<String, String> metadata) {
+    try {
+      return paymentGateway.createPaymentIntent(amount, currency, description, metadata).getClientSecret();
+    } catch (Exception e) {
+      log.error("Error creating payment intent", e);
+      throw new RuntimeException("Failed to create payment intent", e);
+    }
+  }
 
   /**
    * Create a payment authorization.
    */
-  public PaymentTransaction createAuthorization(Long orderId, Long customerId, BigDecimal amount,
+  public PaymentTransaction createAuthorization(UUID orderId, Long customerId, BigDecimal amount,
       String currency, PaymentTransaction.PaymentMethodType methodType,
       String lastFourDigits, String cardBrand) {
     PaymentTransaction transaction = PaymentTransaction.builder()
@@ -64,7 +82,7 @@ public class PaymentService {
   /**
    * Create a sale transaction (authorization + capture combined).
    */
-  public PaymentTransaction createSale(Long orderId, Long customerId, BigDecimal amount,
+  public PaymentTransaction createSale(UUID orderId, Long customerId, BigDecimal amount,
       String currency, PaymentTransaction.PaymentMethodType methodType) {
     PaymentTransaction transaction = PaymentTransaction.builder()
         .orderId(orderId)
@@ -145,7 +163,7 @@ public class PaymentService {
    * Get transactions for an order.
    */
   @Transactional(readOnly = true)
-  public List<PaymentTransaction> getOrderTransactions(Long orderId) {
+  public List<PaymentTransaction> getOrderTransactions(UUID orderId) {
     return transactionRepository.findByOrderId(orderId);
   }
 
@@ -153,7 +171,7 @@ public class PaymentService {
    * Get completed sale for an order.
    */
   @Transactional(readOnly = true)
-  public Optional<PaymentTransaction> getCompletedSale(Long orderId) {
+  public Optional<PaymentTransaction> getCompletedSale(UUID orderId) {
     return transactionRepository.findCompletedSaleByOrderId(orderId);
   }
 
@@ -169,7 +187,7 @@ public class PaymentService {
    * Get total paid amount for an order.
    */
   @Transactional(readOnly = true)
-  public BigDecimal getTotalPaidAmount(Long orderId) {
+  public BigDecimal getTotalPaidAmount(UUID orderId) {
     BigDecimal paid = transactionRepository.sumCompletedAmountByOrderId(orderId);
     return paid != null ? paid : BigDecimal.ZERO;
   }
@@ -178,7 +196,7 @@ public class PaymentService {
    * Get total refunded amount for an order.
    */
   @Transactional(readOnly = true)
-  public BigDecimal getTotalRefundedAmount(Long orderId) {
+  public BigDecimal getTotalRefundedAmount(UUID orderId) {
     BigDecimal refunded = transactionRepository.sumRefundedAmountByOrderId(orderId);
     return refunded != null ? refunded : BigDecimal.ZERO;
   }
@@ -188,7 +206,7 @@ public class PaymentService {
   /**
    * Create a refund request.
    */
-  public Refund createRefundRequest(Long orderId, BigDecimal amount, String currency,
+  public Refund createRefundRequest(UUID orderId, BigDecimal amount, String currency,
       Refund.RefundReason reason, String reasonDetail, Long requestedBy,
       Refund.RequesterType requesterType) {
     Refund refund = Refund.builder()
@@ -251,10 +269,25 @@ public class PaymentService {
 
     // Simulate processing completion
     refund.complete(gatewayRefundId);
-    refund = refundRepository.save(refund);
+    Refund completedRefund = refundRepository.save(refund);
 
     log.info("Processed refund: {}", refundId);
-    return refund;
+
+    // Send notification
+    try {
+      notificationService.createOrderNotification(
+          completedRefund.getRequestedBy(), // Assuming requestedBy is the customer ID for now, or we need to fetch
+                                            // order
+          Notification.NotificationType.PAYMENT_REFUNDED,
+          "Refund Processed",
+          "Your refund of " + completedRefund.getTotalAmount() + " " + completedRefund.getCurrency()
+              + " has been processed.",
+          completedRefund.getOrderId().toString());
+    } catch (Exception e) {
+      log.error("Failed to send refund notification: {}", e.getMessage());
+    }
+
+    return completedRefund;
   }
 
   /**
@@ -269,7 +302,7 @@ public class PaymentService {
    * Get refunds for an order.
    */
   @Transactional(readOnly = true)
-  public List<Refund> getOrderRefunds(Long orderId) {
+  public List<Refund> getOrderRefunds(UUID orderId) {
     return refundRepository.findByOrderId(orderId);
   }
 

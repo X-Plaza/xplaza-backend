@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.xplaza.backend.customer.domain.repository.CustomerRepository;
 import com.xplaza.backend.notification.domain.entity.Notification;
 import com.xplaza.backend.notification.domain.repository.NotificationRepository;
 
@@ -30,6 +31,8 @@ import com.xplaza.backend.notification.domain.repository.NotificationRepository;
 public class NotificationService {
 
   private final NotificationRepository notificationRepository;
+  private final EmailService emailService;
+  private final CustomerRepository customerRepository;
 
   /**
    * Create and send a notification.
@@ -50,8 +53,11 @@ public class NotificationService {
     notification = notificationRepository.save(notification);
     log.info("Created notification for customer {}: type={}", customerId, type);
 
-    // If in-app, mark as sent immediately
-    if (channel == Notification.NotificationChannel.IN_APP) {
+    if (channel == Notification.NotificationChannel.EMAIL) {
+      customerRepository.findById(customerId).ifPresent(customer -> {
+        emailService.sendEmail(customer.getEmail(), title, message);
+      });
+    } else if (channel == Notification.NotificationChannel.IN_APP) {
       notification.markAsSent();
       notification = notificationRepository.save(notification);
     }
@@ -175,16 +181,22 @@ public class NotificationService {
   private void sendNotification(Notification notification) {
     switch (notification.getChannel()) {
     case EMAIL:
-      // TODO: Integrate with email service
+      // Email is handled by the createNotification method directly for immediate
+      // sending,
+      // or by the scheduled task if it was queued.
+      // If we are here from the scheduled task:
+      customerRepository.findById(notification.getCustomerId()).ifPresent(customer -> {
+        emailService.sendEmail(customer.getEmail(), notification.getTitle(), notification.getMessage());
+      });
       log.info("Sending email notification to customer {}", notification.getCustomerId());
       break;
     case SMS:
-      // TODO: Integrate with SMS service
-      log.info("Sending SMS notification to customer {}", notification.getCustomerId());
+      // Placeholder for SMS integration
+      log.info("Sending SMS notification to customer {} (Not implemented)", notification.getCustomerId());
       break;
     case PUSH:
-      // TODO: Integrate with push notification service
-      log.info("Sending push notification to customer {}", notification.getCustomerId());
+      // Placeholder for push notification integration
+      log.info("Sending push notification to customer {} (Not implemented)", notification.getCustomerId());
       break;
     case IN_APP:
       // Already handled
