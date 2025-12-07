@@ -7,7 +7,7 @@ permissions:
 on: pull_request
 
 jobs:
-  test_and_coverage:
+  test-and-coverage:
     runs-on: ubuntu-latest
 
     steps:
