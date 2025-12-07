@@ -1,50 +1,87 @@
-[![Main](https://github.com/x-plaza/xplaza-backend/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/x-plaza/xplaza-backend/actions/workflows/main.yml)
-
 # X-Plaza Backend
 
-Spring Boot backend for X-Plaza multi-vendor e-commerce platform.
+[![Build Status](https://github.com/x-plaza/xplaza-backend/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/x-plaza/xplaza-backend/actions/workflows/main.yml)
+![Java](https://img.shields.io/badge/Java-25-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.0-green)
 
-## Prerequisites
+Backend service for the X-Plaza e-commerce platform.
 
-- Java 24+
-- Maven 3.9+
+## Architecture
 
-## Quick Start
+The application is structured as a **Modular Monolith** following **Domain-Driven Design (DDD)** principles. Code is organized by business domain rather than technical layer to enforce boundaries and simplify maintenance.
+
+### Domains
+
+- **`catalog`**: Product management, inventory, and categorization.
+- **`order`**: Order processing, state management, and checkout flows.
+- **`auth`**: Authentication (JWT) and authorization.
+- **`cart`**: Shopping session management.
+
+## Technology Stack
+
+- **Java 25** (SAP Machine)
+- **Spring Boot 4.0.0**
+- **PostgreSQL 17** (Production) / **H2** (Development)
+- **Hibernate 7** / Spring Data JPA
+- **Flyway** for database migrations
+
+## Development Setup
+
+### Prerequisites
+
+- JDK 25
+- Docker (optional, for local PostgreSQL)
+
+### Build & Run
+
+#### 1. Build
 
 ```bash
-# Run locally (H2 database)
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+./mvnw clean install -DskipTests
+```
 
+#### 2. Run (Local Profile)
+
+Uses in-memory H2 database.
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+#### 3. Run (Cloud Profile)
+
+Requires a running PostgreSQL instance.
+
+```bash
+export DB_URL=jdbc:postgresql://localhost:5432/xplaza
+export DB_USERNAME=postgres
+export DB_PASSWORD=postgres
+./mvnw spring-boot:run -Dspring-boot.run.profiles=cloud
+```
+
+## Testing & Code Quality
+
+The project uses **Spotless** to enforce Google Java Style and **JaCoCo** for coverage.
+
+```bash
 # Run tests
 ./mvnw test
 
-# Format code
+# Apply code formatting
 ./mvnw spotless:apply
 ```
 
-## API
+## Deployment
 
-Base URL: `/api/v1/*`
+The application is containerized using Docker.
 
-Swagger UI: <http://localhost:8080/swagger-ui/index.html>
-
-### Authentication
-
-All protected endpoints require a JWT token in the Authorization header:
-
-```text
-Authorization: Bearer <token>
+```bash
+docker build -t xplaza-backend .
 ```
 
-Use `/api/v1/auth/login` to obtain tokens.
+### Profiles
 
-## Config
-
-| Profile | Database | Use Case |
-|---------|----------|----------|
-| `local` | H2 (in-memory) | Development |
-| `cloud` | PostgreSQL | Production |
-
----
-
-© 2025 Xplaza or Xplaza affiliate company. All rights reserved.
+| Profile | Database | Migrations | Usage |
+|---------|----------|------------|-------|
+| `local` | H2 | Disabled | Local development |
+| `cloud` | PostgreSQL | Enabled | Production / CI |
