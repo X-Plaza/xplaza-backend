@@ -21,8 +21,48 @@ jobs:
         with:
           distribution: 'sapmachine'
           java-version: '25'
+          cache: 'maven'
+
+      - name: Enforce Code Style (Spotless)
+        run: mvn spotless:check
+
+      - name: Run Checkstyle
+        run: mvn checkstyle:check
+        continue-on-error: true
+
+      - name: Install Reviewdog
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+
+      - name: Run Reviewdog (Checkstyle)
+        if: always()
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          reviewdog -f=checkstyle \
+            -name="checkstyle" \
+            -reporter=github-pr-review \
+            -level=warning \
+            < target/checkstyle-result.xml
+
+      - name: Security Scan (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'table'
+          exit-code: '0' # Don't fail the build, just report
+          severity: 'CRITICAL,HIGH'
+
       - name: Run Tests and Generate Coverage Report
         run: mvn test jacoco:report -Dspring.profiles.active=local
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure() # Always run even if tests fail
+        with:
+          report_paths: '**/target/surefire-reports/TEST-*.xml'
 
       - name: Generate JaCoCo badge and summary
         id: jacoco
@@ -37,11 +77,6 @@ jobs:
         with:
           name: jacoco-report
           path: target/site/jacoco/
-
-      - name: Install GitHub CLI and jq
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gh jq
 
       - name: Comment on PR with Coverage
         if: ${{ github.event_name == 'pull_request' }}
