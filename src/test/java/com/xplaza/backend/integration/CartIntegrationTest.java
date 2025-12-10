@@ -2,12 +2,14 @@
  * Copyright (c) 2025 Xplaza or Xplaza affiliate company. All rights reserved.
  * Author: Mahiuddin Al Kamal <mahiuddinalkamal>
  */
+
 package com.xplaza.backend.integration;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -86,7 +88,7 @@ public class CartIntegrationTest extends BaseIntegrationTest {
     mockMvc.perform(put("/api/v1/carts/" + cartId + "/items/" + itemId)
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(updateRequest)))
-        .andDo(org.springframework.test.web.servlet.result.MockMvcResultHandlers.print())
+        .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.quantity").value(5));
 

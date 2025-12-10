@@ -2,11 +2,14 @@
  * Copyright (c) 2025 Xplaza or Xplaza affiliate company. All rights reserved.
  * Author: Mahiuddin Al Kamal <mahiuddinalkamal>
  */
+
 package com.xplaza.backend.common.util;
 
 import java.time.Instant;
 
 import lombok.Getter;
+
+import org.springframework.data.domain.Page;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -138,7 +141,7 @@ public class ApiResponse<T> {
     /**
      * Create from Spring Data Page
      */
-    public static PageMeta from(org.springframework.data.domain.Page<?> page) {
+    public static PageMeta from(Page<?> page) {
       return new PageMeta(
           page.getNumber(),
           page.getSize(),

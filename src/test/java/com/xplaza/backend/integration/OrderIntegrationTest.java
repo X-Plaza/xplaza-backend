@@ -2,8 +2,10 @@
  * Copyright (c) 2025 Xplaza or Xplaza affiliate company. All rights reserved.
  * Author: Mahiuddin Al Kamal <mahiuddinalkamal>
  */
+
 package com.xplaza.backend.integration;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -69,7 +71,7 @@ public class OrderIntegrationTest extends BaseIntegrationTest {
     // Get Shop ID from product
     String productDetails = mockMvc
         .perform(
-            org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/api/v1/products/" + productId)
+            get("/api/v1/products/" + productId)
                 .header("Authorization", "Bearer " + adminToken))
         .andReturn().getResponse().getContentAsString();
     Long shopId = objectMapper.readTree(productDetails).path("data").path("shopId").asLong();

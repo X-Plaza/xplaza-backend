@@ -2,6 +2,7 @@
  * Copyright (c) 2025 Xplaza or Xplaza affiliate company. All rights reserved.
  * Author: Mahiuddin Al Kamal <mahiuddinalkamal>
  */
+
 package com.xplaza.backend.exception;
 
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -42,9 +44,9 @@ public class GlobalExceptionHandler {
   /**
    * Handle bad credentials (401)
    */
-  @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+  @ExceptionHandler(BadCredentialsException.class)
   public ResponseEntity<ApiResponse<Void>> handleBadCredentials(
-      org.springframework.security.authentication.BadCredentialsException ex) {
+      BadCredentialsException ex) {
     log.warn("Bad credentials: {}", ex.getMessage());
     return ResponseEntity
         .status(HttpStatus.UNAUTHORIZED)

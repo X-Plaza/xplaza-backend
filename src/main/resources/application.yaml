@@ -36,6 +36,12 @@ stripe:
   api-key: ${STRIPE_API_KEY}
   webhook-secret: ${STRIPE_WEBHOOK_SECRET}
 
+minio:
+  url: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket-name: xplaza-products
+
 resilience4j.retry:
   instances:
     globalRetry:
