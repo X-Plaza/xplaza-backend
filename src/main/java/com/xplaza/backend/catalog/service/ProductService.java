@@ -126,47 +126,58 @@ public class ProductService {
     Product product = listProduct(productId);
     List<String> uploadedUrls = new ArrayList<>();
 
-    if (variantId != null) {
-      ProductVariant variant = productVariantRepository.findById(variantId)
-          .orElseThrow(() -> new ResourceNotFoundException("Variant not found with id: " + variantId));
+    try {
+      if (variantId != null) {
+        ProductVariant variant = productVariantRepository.findById(variantId)
+            .orElseThrow(() -> new ResourceNotFoundException("Variant not found with id: " + variantId));
 
-      if (!variant.getProductId().equals(productId)) {
-        throw new ValidationException("Variant does not belong to the specified product");
-      }
+        if (!variant.getProductId().equals(productId)) {
+          throw new ValidationException("Variant does not belong to the specified product");
+        }
 
-      long currentImageCount = variantImageRepository.countByVariantVariantId(variantId);
-      if (currentImageCount + files.size() > 10) {
-        throw new ValidationException("Variant cannot have more than 10 images. Current: "
-            + currentImageCount + ", Attempting to add: " + files.size());
-      }
+        long currentImageCount = variantImageRepository.countByVariantVariantId(variantId);
+        if (currentImageCount + files.size() > 10) {
+          throw new ValidationException("Variant cannot have more than 10 images. Current: "
+              + currentImageCount + ", Attempting to add: " + files.size());
+        }
 
-      for (MultipartFile file : files) {
-        String imageUrl = fileStorageService.uploadFile(file);
-        VariantImage variantImage = new VariantImage();
-        variantImage.setVariant(variant);
-        variantImage.setUrl(imageUrl);
-        variantImage.setAltText(file.getOriginalFilename());
-        variantImageRepository.save(variantImage);
-        uploadedUrls.add(imageUrl);
-      }
-    } else {
-      long currentImageCount = productImageRepository.countByProductProductId(productId);
+        for (MultipartFile file : files) {
+          String imageUrl = fileStorageService.uploadFile(file);
+          uploadedUrls.add(imageUrl);
+          VariantImage variantImage = new VariantImage();
+          variantImage.setVariant(variant);
+          variantImage.setUrl(imageUrl);
+          variantImage.setAltText(file.getOriginalFilename());
+          variantImageRepository.save(variantImage);
+        }
+      } else {
+        long currentImageCount = productImageRepository.countByProductProductId(productId);
 
-      if (currentImageCount + files.size() > 10) {
-        throw new ValidationException("Product cannot have more than 10 images. Current: "
-            + currentImageCount + ", Attempting to add: " + files.size());
-      }
+        if (currentImageCount + files.size() > 10) {
+          throw new ValidationException("Product cannot have more than 10 images. Current: "
+              + currentImageCount + ", Attempting to add: " + files.size());
+        }
 
-      for (MultipartFile file : files) {
-        String imageUrl = fileStorageService.uploadFile(file);
-        ProductImage productImage = new ProductImage();
-        productImage.setProduct(product);
-        productImage.setProductImageName(file.getOriginalFilename());
-        productImage.setProductImagePath(imageUrl);
-        productImage.setCreatedAt(new Date());
-        productImageRepository.save(productImage);
-        uploadedUrls.add(imageUrl);
+        for (MultipartFile file : files) {
+          String imageUrl = fileStorageService.uploadFile(file);
+          uploadedUrls.add(imageUrl);
+          ProductImage productImage = new ProductImage();
+          productImage.setProduct(product);
+          productImage.setProductImageName(file.getOriginalFilename());
+          productImage.setProductImagePath(imageUrl);
+          productImage.setCreatedAt(new Date());
+          productImageRepository.save(productImage);
+        }
       }
+    } catch (RuntimeException e) {
+      for (String url : uploadedUrls) {
+        try {
+          fileStorageService.deleteFile(url);
+        } catch (Exception ex) {
+          // Best effort cleanup, ignore errors
+        }
+      }
+      throw e;
     }
     return uploadedUrls;
   }

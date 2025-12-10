@@ -26,10 +26,6 @@ public class ProductImage {
   @JoinColumn(name = "fk_product_id")
   private Product product;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "fk_product_variant_id")
-  private ProductVariant productVariant;
-
   private String productImageName;
 
   private String productImagePath;
