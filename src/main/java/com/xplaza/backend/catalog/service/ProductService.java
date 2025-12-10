@@ -4,7 +4,9 @@
  */
 package com.xplaza.backend.catalog.service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 
@@ -12,15 +14,27 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.xplaza.backend.catalog.domain.entity.Product;
+import com.xplaza.backend.catalog.domain.entity.ProductImage;
+import com.xplaza.backend.catalog.domain.entity.ProductVariant;
+import com.xplaza.backend.catalog.domain.entity.VariantImage;
+import com.xplaza.backend.catalog.domain.repository.ProductImageRepository;
 import com.xplaza.backend.catalog.domain.repository.ProductRepository;
+import com.xplaza.backend.catalog.domain.repository.ProductVariantRepository;
+import com.xplaza.backend.catalog.domain.repository.VariantImageRepository;
+import com.xplaza.backend.common.service.FileStorageService;
 import com.xplaza.backend.exception.ResourceNotFoundException;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
   private final ProductRepository productRepository;
+  private final ProductImageRepository productImageRepository;
+  private final ProductVariantRepository productVariantRepository;
+  private final VariantImageRepository variantImageRepository;
+  private final FileStorageService fileStorageService;
 
   @Transactional
   public Product addProduct(Product product) {
@@ -102,5 +116,55 @@ public class ProductService {
 
   public boolean exists(Long id) {
     return productRepository.existsById(id);
+  }
+
+  @Transactional
+  public List<String> uploadProductImages(Long productId, UUID variantId, List<MultipartFile> files) {
+    Product product = listProduct(productId);
+    List<String> uploadedUrls = new java.util.ArrayList<>();
+
+    if (variantId != null) {
+      ProductVariant variant = productVariantRepository.findById(variantId)
+          .orElseThrow(() -> new ResourceNotFoundException("Variant not found with id: " + variantId));
+
+      if (!variant.getProductId().equals(productId)) {
+        throw new com.xplaza.backend.exception.ValidationException("Variant does not belong to the specified product");
+      }
+
+      long currentImageCount = variantImageRepository.countByVariantVariantId(variantId);
+      if (currentImageCount + files.size() > 10) {
+        throw new com.xplaza.backend.exception.ValidationException("Variant cannot have more than 10 images. Current: "
+            + currentImageCount + ", Attempting to add: " + files.size());
+      }
+
+      for (MultipartFile file : files) {
+        String imageUrl = fileStorageService.uploadFile(file);
+        VariantImage variantImage = new VariantImage();
+        variantImage.setVariant(variant);
+        variantImage.setUrl(imageUrl);
+        variantImage.setAltText(file.getOriginalFilename());
+        variantImageRepository.save(variantImage);
+        uploadedUrls.add(imageUrl);
+      }
+    } else {
+      long currentImageCount = productImageRepository.countByProductProductId(productId);
+
+      if (currentImageCount + files.size() > 10) {
+        throw new com.xplaza.backend.exception.ValidationException("Product cannot have more than 10 images. Current: "
+            + currentImageCount + ", Attempting to add: " + files.size());
+      }
+
+      for (MultipartFile file : files) {
+        String imageUrl = fileStorageService.uploadFile(file);
+        ProductImage productImage = new ProductImage();
+        productImage.setProduct(product);
+        productImage.setProductImageName(file.getOriginalFilename());
+        productImage.setProductImagePath(imageUrl);
+        productImage.setCreatedAt(new Date());
+        productImageRepository.save(productImage);
+        uploadedUrls.add(imageUrl);
+      }
+    }
+    return uploadedUrls;
   }
 }

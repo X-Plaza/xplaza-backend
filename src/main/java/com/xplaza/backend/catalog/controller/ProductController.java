@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.xplaza.backend.catalog.domain.entity.Product;
 import com.xplaza.backend.catalog.dto.request.ProductRequest;
@@ -187,5 +188,20 @@ public class ProductController {
     productService.updateProductInventory(id, quantity);
 
     return ResponseEntity.ok(ApiResponse.ok("Inventory updated"));
+  }
+
+  /**
+   * POST /api/v1/products/{id}/images
+   * 
+   * Upload product images.
+   */
+  @PostMapping(value = "/{id}/images", consumes = "multipart/form-data")
+  @Operation(summary = "Upload product images", description = "Upload images for a product or variant (max 10 total)")
+  public ResponseEntity<ApiResponse<List<String>>> uploadProductImages(
+      @PathVariable Long id,
+      @RequestParam(required = false) java.util.UUID variantId,
+      @RequestParam("files") List<MultipartFile> files) {
+    List<String> imageUrls = productService.uploadProductImages(id, variantId, files);
+    return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.created(imageUrls));
   }
 }
