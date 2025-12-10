@@ -48,3 +48,9 @@ jwt:
   secret: ${JWT_SECRET}
   expiration: 300000  # 5 minutes in milliseconds
   refresh-expiration: 604800000  # 7 days in milliseconds
+
+minio:
+  url: ${MINIO_URL}
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+  bucket-name: xplaza-products
