@@ -4,15 +4,31 @@
  */
 package com.xplaza.backend.integration;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xplaza.backend.auth.dto.request.AdminUserRequest;
+import com.xplaza.backend.catalog.dto.request.BrandRequest;
+import com.xplaza.backend.catalog.dto.request.CategoryRequest;
+import com.xplaza.backend.catalog.dto.request.ProductRequest;
+import com.xplaza.backend.inventory.domain.entity.InventoryItem;
+import com.xplaza.backend.inventory.domain.entity.Warehouse;
+import com.xplaza.backend.inventory.domain.repository.InventoryItemRepository;
+import com.xplaza.backend.inventory.domain.repository.WarehouseRepository;
+import com.xplaza.backend.payment.service.PaymentGateway;
+import com.xplaza.backend.shop.dto.request.ShopRequest;
 
 @SpringBootTest(properties = {
     "stripe.api-key=sk_test_mock",
@@ -29,19 +45,19 @@ public abstract class BaseIntegrationTest {
   @Autowired
   protected ObjectMapper objectMapper;
 
-  @org.springframework.test.context.bean.override.mockito.MockitoBean
-  protected com.xplaza.backend.payment.service.PaymentGateway paymentGateway;
+  @MockitoBean
+  protected PaymentGateway paymentGateway;
 
   protected MockMvc mockMvc;
 
   @Autowired
-  protected com.xplaza.backend.inventory.domain.repository.InventoryItemRepository inventoryItemRepository;
+  protected InventoryItemRepository inventoryItemRepository;
 
   @Autowired
-  protected com.xplaza.backend.inventory.domain.repository.WarehouseRepository warehouseRepository;
+  protected WarehouseRepository warehouseRepository;
 
   @Autowired
-  protected org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+  protected JdbcTemplate jdbcTemplate;
 
   @BeforeEach
   public void setup() {
@@ -53,7 +69,7 @@ public abstract class BaseIntegrationTest {
     String uniqueName = "admin_" + java.util.UUID.randomUUID();
     String email = uniqueName + "@xplaza.com";
 
-    com.xplaza.backend.auth.dto.request.AdminUserRequest registerRequest = new com.xplaza.backend.auth.dto.request.AdminUserRequest();
+    AdminUserRequest registerRequest = new AdminUserRequest();
     registerRequest.setUserName(uniqueName);
     registerRequest.setFullName("Admin User");
     registerRequest.setEmail(email);
@@ -61,12 +77,12 @@ public abstract class BaseIntegrationTest {
     registerRequest.setRoleId(1L);
 
     String response = mockMvc
-        .perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/v1/auth/register")
-            .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+        .perform(post("/api/v1/auth/register")
+            .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(registerRequest)))
         .andReturn().getResponse().getContentAsString();
 
-    com.fasterxml.jackson.databind.JsonNode root = objectMapper.readTree(response);
+    JsonNode root = objectMapper.readTree(response);
     return root.path("data").path("jwtToken").asText();
   }
 
@@ -74,47 +90,47 @@ public abstract class BaseIntegrationTest {
     String authHeader = "Bearer " + token;
 
     // 1. Create Category
-    com.xplaza.backend.catalog.dto.request.CategoryRequest categoryRequest = new com.xplaza.backend.catalog.dto.request.CategoryRequest();
+    CategoryRequest categoryRequest = new CategoryRequest();
     categoryRequest.setCategoryName("Cat_" + java.util.UUID.randomUUID());
     categoryRequest.setCategoryDescription("Desc");
 
     String categoryResponse = mockMvc
-        .perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/v1/categories")
+        .perform(post("/api/v1/categories")
             .header("Authorization", authHeader)
-            .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(categoryRequest)))
         .andReturn().getResponse().getContentAsString();
     Long categoryId = objectMapper.readTree(categoryResponse).path("data").path("categoryId").asLong();
 
     // 2. Create Brand
-    com.xplaza.backend.catalog.dto.request.BrandRequest brandRequest = new com.xplaza.backend.catalog.dto.request.BrandRequest();
+    BrandRequest brandRequest = new BrandRequest();
     brandRequest.setBrandName("Brand_" + java.util.UUID.randomUUID());
     brandRequest.setBrandDescription("Desc");
 
     String brandResponse = mockMvc
-        .perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/v1/brands")
+        .perform(post("/api/v1/brands")
             .header("Authorization", authHeader)
-            .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(brandRequest)))
         .andReturn().getResponse().getContentAsString();
     Long brandId = objectMapper.readTree(brandResponse).path("data").path("brandId").asLong();
 
     // 3. Create Shop
-    com.xplaza.backend.shop.dto.request.ShopRequest shopRequest = new com.xplaza.backend.shop.dto.request.ShopRequest();
+    ShopRequest shopRequest = new ShopRequest();
     shopRequest.setShopName("Shop_" + java.util.UUID.randomUUID());
     shopRequest.setShopDescription("Desc");
     shopRequest.setShopOwner("Owner");
 
     String shopResponse = mockMvc
-        .perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/v1/shops")
+        .perform(post("/api/v1/shops")
             .header("Authorization", authHeader)
-            .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(shopRequest)))
         .andReturn().getResponse().getContentAsString();
     Long shopId = objectMapper.readTree(shopResponse).path("data").path("shopId").asLong();
 
     // 4. Create Product
-    com.xplaza.backend.catalog.dto.request.ProductRequest productRequest = new com.xplaza.backend.catalog.dto.request.ProductRequest();
+    ProductRequest productRequest = new ProductRequest();
     productRequest.setProductName("Prod_" + java.util.UUID.randomUUID());
     productRequest.setProductDescription("Desc");
     productRequest.setProductPrice(100.0);
@@ -124,9 +140,9 @@ public abstract class BaseIntegrationTest {
     productRequest.setShopId(shopId);
 
     String productResponse = mockMvc
-        .perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/v1/products")
+        .perform(post("/api/v1/products")
             .header("Authorization", authHeader)
-            .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(productRequest)))
         .andReturn().getResponse().getContentAsString();
 
@@ -134,8 +150,8 @@ public abstract class BaseIntegrationTest {
 
     // 5. Create Inventory
     // Ensure Warehouse exists
-    com.xplaza.backend.inventory.domain.entity.Warehouse warehouse = warehouseRepository.findByCode("MAIN")
-        .orElseGet(() -> warehouseRepository.save(com.xplaza.backend.inventory.domain.entity.Warehouse.builder()
+    Warehouse warehouse = warehouseRepository.findByCode("MAIN")
+        .orElseGet(() -> warehouseRepository.save(Warehouse.builder()
             .name("Main Warehouse")
             .code("MAIN")
             .city("City")
@@ -145,14 +161,14 @@ public abstract class BaseIntegrationTest {
             .isActive(true)
             .build()));
 
-    com.xplaza.backend.inventory.domain.entity.InventoryItem inventoryItem = com.xplaza.backend.inventory.domain.entity.InventoryItem
+    InventoryItem inventoryItem = InventoryItem
         .builder()
         .productId(productId)
         .warehouse(warehouse)
         .sku("SKU-" + productId)
         .quantityOnHand(100)
         .quantityReserved(0)
-        .status(com.xplaza.backend.inventory.domain.entity.InventoryItem.InventoryStatus.ACTIVE)
+        .status(InventoryItem.InventoryStatus.ACTIVE)
         .build();
 
     inventoryItemRepository.save(inventoryItem);

@@ -4,6 +4,7 @@
  */
 package com.xplaza.backend.catalog.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -26,6 +27,7 @@ import com.xplaza.backend.catalog.domain.repository.ProductVariantRepository;
 import com.xplaza.backend.catalog.domain.repository.VariantImageRepository;
 import com.xplaza.backend.common.service.FileStorageService;
 import com.xplaza.backend.exception.ResourceNotFoundException;
+import com.xplaza.backend.exception.ValidationException;
 
 @Service
 @RequiredArgsConstructor
@@ -121,19 +123,19 @@ public class ProductService {
   @Transactional
   public List<String> uploadProductImages(Long productId, UUID variantId, List<MultipartFile> files) {
     Product product = listProduct(productId);
-    List<String> uploadedUrls = new java.util.ArrayList<>();
+    List<String> uploadedUrls = new ArrayList<>();
 
     if (variantId != null) {
       ProductVariant variant = productVariantRepository.findById(variantId)
           .orElseThrow(() -> new ResourceNotFoundException("Variant not found with id: " + variantId));
 
       if (!variant.getProductId().equals(productId)) {
-        throw new com.xplaza.backend.exception.ValidationException("Variant does not belong to the specified product");
+        throw new ValidationException("Variant does not belong to the specified product");
       }
 
       long currentImageCount = variantImageRepository.countByVariantVariantId(variantId);
       if (currentImageCount + files.size() > 10) {
-        throw new com.xplaza.backend.exception.ValidationException("Variant cannot have more than 10 images. Current: "
+        throw new ValidationException("Variant cannot have more than 10 images. Current: "
             + currentImageCount + ", Attempting to add: " + files.size());
       }
 
@@ -150,7 +152,7 @@ public class ProductService {
       long currentImageCount = productImageRepository.countByProductProductId(productId);
 
       if (currentImageCount + files.size() > 10) {
-        throw new com.xplaza.backend.exception.ValidationException("Product cannot have more than 10 images. Current: "
+        throw new ValidationException("Product cannot have more than 10 images. Current: "
             + currentImageCount + ", Attempting to add: " + files.size());
       }
 

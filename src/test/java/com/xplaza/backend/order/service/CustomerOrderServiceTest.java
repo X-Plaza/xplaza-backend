@@ -25,11 +25,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.xplaza.backend.cart.domain.entity.Cart;
 import com.xplaza.backend.cart.domain.entity.CartItem;
 import com.xplaza.backend.cart.domain.repository.CartRepository;
+import com.xplaza.backend.inventory.service.InventoryService;
+import com.xplaza.backend.notification.service.NotificationService;
 import com.xplaza.backend.order.domain.entity.CheckoutSession;
 import com.xplaza.backend.order.domain.entity.CustomerOrder;
 import com.xplaza.backend.order.domain.entity.CustomerOrder.OrderStatus;
 import com.xplaza.backend.order.domain.repository.CustomerOrderItemRepository;
 import com.xplaza.backend.order.domain.repository.CustomerOrderRepository;
+import com.xplaza.backend.payment.service.PaymentService;
 
 @ExtendWith(MockitoExtension.class)
 class CustomerOrderServiceTest {
@@ -44,13 +47,13 @@ class CustomerOrderServiceTest {
   private CartRepository cartRepository;
 
   @Mock
-  private com.xplaza.backend.payment.service.PaymentService paymentService;
+  private PaymentService paymentService;
 
   @Mock
-  private com.xplaza.backend.notification.service.NotificationService notificationService;
+  private NotificationService notificationService;
 
   @Mock
-  private com.xplaza.backend.inventory.service.InventoryService inventoryService;
+  private InventoryService inventoryService;
 
   @InjectMocks
   private CustomerOrderService orderService;

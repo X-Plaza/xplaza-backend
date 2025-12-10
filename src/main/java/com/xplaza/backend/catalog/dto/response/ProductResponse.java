@@ -4,6 +4,8 @@
  */
 package com.xplaza.backend.catalog.dto.response;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,4 +28,5 @@ public class ProductResponse {
   private String categoryName;
   private Long brandId;
   private String brandName;
+  private List<ProductImageResponse> images;
 }

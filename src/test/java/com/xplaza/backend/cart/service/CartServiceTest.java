@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,6 +27,13 @@ import com.xplaza.backend.cart.domain.entity.Cart;
 import com.xplaza.backend.cart.domain.entity.CartItem;
 import com.xplaza.backend.cart.domain.repository.CartItemRepository;
 import com.xplaza.backend.cart.domain.repository.CartRepository;
+import com.xplaza.backend.catalog.domain.entity.Product;
+import com.xplaza.backend.catalog.domain.entity.ProductVariant;
+import com.xplaza.backend.catalog.domain.repository.ProductRepository;
+import com.xplaza.backend.catalog.domain.repository.ProductVariantRepository;
+import com.xplaza.backend.inventory.service.InventoryService;
+import com.xplaza.backend.promotion.service.ProductDiscountService;
+import com.xplaza.backend.shop.domain.entity.Shop;
 
 @ExtendWith(MockitoExtension.class)
 class CartServiceTest {
@@ -37,16 +45,16 @@ class CartServiceTest {
   private CartItemRepository cartItemRepository;
 
   @Mock
-  private com.xplaza.backend.catalog.domain.repository.ProductRepository productRepository;
+  private ProductRepository productRepository;
 
   @Mock
-  private com.xplaza.backend.catalog.domain.repository.ProductVariantRepository productVariantRepository;
+  private ProductVariantRepository productVariantRepository;
 
   @Mock
-  private com.xplaza.backend.inventory.service.InventoryService inventoryService;
+  private InventoryService inventoryService;
 
   @Mock
-  private com.xplaza.backend.promotion.service.ProductDiscountService productDiscountService;
+  private ProductDiscountService productDiscountService;
 
   @InjectMocks
   private CartService cartService;
@@ -97,16 +105,16 @@ class CartServiceTest {
 
     given(cartRepository.findByIdWithItems(cartId)).willReturn(Optional.of(activeCart));
 
-    com.xplaza.backend.catalog.domain.entity.Product product = new com.xplaza.backend.catalog.domain.entity.Product();
+    Product product = new Product();
     product.setProductId(productId);
     product.setProductSellingPrice(100.00);
-    com.xplaza.backend.shop.domain.entity.Shop shop = new com.xplaza.backend.shop.domain.entity.Shop();
+    Shop shop = new Shop();
     shop.setShopId(shopId);
     product.setShop(shop);
     given(productRepository.findById(productId)).willReturn(Optional.of(product));
     given(productDiscountService.calculateDiscountedPrice(product)).willReturn(BigDecimal.valueOf(100.00));
 
-    com.xplaza.backend.catalog.domain.entity.ProductVariant variant = new com.xplaza.backend.catalog.domain.entity.ProductVariant();
+    ProductVariant variant = new ProductVariant();
     variant.setVariantId(variantId);
     variant.setPrice(BigDecimal.valueOf(100.00));
     given(productVariantRepository.findById(variantId)).willReturn(Optional.of(variant));
@@ -143,13 +151,13 @@ class CartServiceTest {
 
     given(cartRepository.findByIdWithItems(cartId)).willReturn(Optional.of(activeCart));
 
-    com.xplaza.backend.catalog.domain.entity.Product product = new com.xplaza.backend.catalog.domain.entity.Product();
+    Product product = new Product();
     product.setProductId(productId);
     product.setProductSellingPrice(100.00);
     given(productRepository.findById(productId)).willReturn(Optional.of(product));
     given(productDiscountService.calculateDiscountedPrice(product)).willReturn(BigDecimal.valueOf(100.00));
 
-    com.xplaza.backend.catalog.domain.entity.ProductVariant variant = new com.xplaza.backend.catalog.domain.entity.ProductVariant();
+    ProductVariant variant = new ProductVariant();
     variant.setVariantId(variantId);
     variant.setPrice(BigDecimal.valueOf(100.00));
     given(productVariantRepository.findById(variantId)).willReturn(Optional.of(variant));
@@ -199,7 +207,7 @@ class CartServiceTest {
         .quantity(1)
         .build();
     // Using a modifiable list for items since the service will modify it
-    activeCart.setItems(new ArrayList<>(java.util.List.of(existingItem)));
+    activeCart.setItems(new ArrayList<>(List.of(existingItem)));
 
     given(cartRepository.findByIdWithItems(cartId)).willReturn(Optional.of(activeCart));
 
