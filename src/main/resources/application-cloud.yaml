@@ -15,7 +15,6 @@ spring:
       pool-name: HikariPool
       max-lifetime: 1800000
       connection-timeout: 30000
-      schema: xplaza
 
   jpa:
     hibernate:
@@ -25,12 +24,12 @@ spring:
     properties:
       hibernate.format_sql: true
       hibernate.jdbc.lob.non_contextual_creation: true
-      hibernate.default_schema: xplaza
+      hibernate.default_schema: public
 
   flyway:
     enabled: true
     locations: classpath:db/migration
-    schemas: xplaza
+    schemas: public
     baseline-on-migrate: true
 
 server:
