@@ -15,7 +15,6 @@ spring:
       pool-name: HikariPool
       max-lifetime: 1800000
       connection-timeout: 30000
-      schema: public
 
   jpa:
     hibernate:
