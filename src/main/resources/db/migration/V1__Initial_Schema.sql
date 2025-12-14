@@ -5,10 +5,6 @@
 -- Description: Initial Schema
 -- =====================================================
 
--- Create and switch to xplaza schema
-CREATE SCHEMA IF NOT EXISTS xplaza;
-SET search_path TO xplaza;
-
 -- =====================================================
 -- SEQUENCES
 -- =====================================================
