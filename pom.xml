@@ -218,7 +218,7 @@
 		<dependency>
 			<groupId>com.stripe</groupId>
 			<artifactId>stripe-java</artifactId>
-			<version>31.1.0</version>
+			<version>31.2.0</version>
 		</dependency>
 
 		<!-- OpenAPI UI for Spring -->
