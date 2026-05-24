@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
 # ---- Stage 1: Build ----
-FROM maven:3.9.11-sapmachine-25 AS build
+FROM maven:3.9.15-sapmachine-26 AS build
 # The upstream maven image ships `ENV MAVEN_CONFIG=/root/.m2` so its entrypoint
 # script can point Maven at the mounted local repo. During `docker build`,
 # `RUN` skips the entrypoint, so that variable leaks into the shell unchanged.
