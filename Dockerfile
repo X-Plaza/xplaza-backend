@@ -23,7 +23,7 @@ RUN --mount=type=cache,target=/root/.m2 ./mvnw -B -ntp -DskipTests package \
     && (cd /workspace/dependency; jar -xf /workspace/target/backend-*.jar)
 
 # ---- Stage 2: Runtime ----
-FROM sapmachine:25-jre-headless-ubuntu-noble
+FROM sapmachine:26-jre-headless-ubuntu-noble
 LABEL org.opencontainers.image.source="https://github.com/x-plaza/xplaza-backend"
 LABEL org.opencontainers.image.description="X-Plaza e-commerce backend"
 LABEL org.opencontainers.image.licenses="Proprietary"
